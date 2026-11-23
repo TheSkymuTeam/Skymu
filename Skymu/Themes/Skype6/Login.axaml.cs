@@ -19,7 +19,7 @@ namespace Skymu.Skype6
 {
     public partial class Login : LoginWindowBase
     {
-        public Login(bool switchuser = false) : base(switchuser)
+        public Login() 
         {
             InitializeComponent();
             //ThemeManager.Load("default"); // TODO themes login

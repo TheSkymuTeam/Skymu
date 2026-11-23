@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Yggdrasil.Models;
 
 namespace Skymu.Forms.Pages
@@ -173,7 +174,7 @@ namespace Skymu.Forms.Pages
 
             if (Universal.SignedIn)
                 Dispatcher.UIThread.Post(() =>
-                    Universal.ActiveViewModel.InitiateSignOut(switchuser: true));
+                    Universal.ActiveViewModel.InitiateSignOut(purge: false));
         }
 
         private void AutoLoginButton_Click(object sender, RoutedEventArgs e)
@@ -223,12 +224,12 @@ namespace Skymu.Forms.Pages
             Reload();
         }
 
-        private void RemoveButton_Click(object sender, RoutedEventArgs e)
+        private async void RemoveButton_Click(object sender, RoutedEventArgs e)
         {
             if (!(AccountList.SelectedItem is AccountEntry entry))
                 return;
 
-            if (!Confirm("Remove account?", "Remove \"" + entry.DisplayName + "\" from this computer?\n\nYou will need to sign in again to use this account."))
+            if (!await Confirm("Remove account?", "Remove \"" + entry.DisplayName + "\" from this computer?\n\nYou will need to sign in again to use this account."))
                 return;
 
             try
@@ -243,9 +244,9 @@ namespace Skymu.Forms.Pages
             Reload();
         }
 
-        private void RemoveAllButton_Click(object sender, RoutedEventArgs e)
+        private async void RemoveAllButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!Confirm("Remove all accounts?", "Remove all saved accounts from this computer?\n\nYou will need to sign in again to use them."))
+            if (!await Confirm("Remove all accounts?", "Remove all saved accounts from this computer?\n\nYou will need to sign in again to use them."))
                 return;
 
             try
@@ -260,7 +261,7 @@ namespace Skymu.Forms.Pages
             Reload();
         }
 
-        private bool Confirm(string header, string text)
+        private async Task<bool> Confirm(string header, string text)
         {
             bool confirmed = false;
             Dialog dialog = null;
@@ -280,8 +281,7 @@ namespace Skymu.Forms.Pages
             );
 
             dialog.SetRightButtonAsDefault();
-            dialog.Show();
-
+            await dialog.ShowAsync();   
             return confirmed;
         }
 
@@ -296,7 +296,7 @@ namespace Skymu.Forms.Pages
 
             if (Universal.SignedIn)
                 Dispatcher.UIThread.Post(() =>
-                    Universal.ActiveViewModel.InitiateSignOut(switchuser: true));
+                    Universal.ActiveViewModel.InitiateSignOut(purge: false));
         }
     }
 }

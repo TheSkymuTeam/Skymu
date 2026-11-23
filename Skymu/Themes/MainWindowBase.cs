@@ -188,7 +188,7 @@ namespace Skymu.Theming
         protected abstract void ShowHomeView();
         protected abstract void ShowChatView();
         protected abstract void ShowOwnName(string name);
-        protected abstract void ShowLogin(bool switchuser);
+        protected abstract void ShowLogin();
 
         protected virtual void ShowCreditText(string text) { }
         protected virtual Task GenerateHome() => Task.CompletedTask;
@@ -685,7 +685,7 @@ namespace Skymu.Theming
 
             vmodel.SignOutRequested += (s, e) =>
             {
-                ShowLogin(e.switchuser);
+                ShowLogin();
                 noCloseEvent = true;
                 Close();
             };
@@ -1272,36 +1272,6 @@ namespace Skymu.Theming
         }
 
         protected void OnHome(object sender, RoutedEventArgs e) => SetWindow(WindowType.Home);
-
-        protected void OnOptions(object sender, RoutedEventArgs e)
-        {
-            new Options().Show();
-        }
-
-        protected void OnAbout(object sender, RoutedEventArgs e)
-        {
-            new About().Show();
-        }
-
-        protected void OnPrivacyPolicy(object sender, RoutedEventArgs e)
-        {
-            Universal.OpenURL(Universal.SKYMU_WEBSITE_PRIVACY);
-        }
-
-        protected void OnCheckUpdates(object sender, RoutedEventArgs e)
-        {
-            new Updater(true);
-        }
-
-        protected void OnCall(object sender, RoutedEventArgs e) => CallButtonClick(null, null);
-
-        protected void OnAddContact(object sender, RoutedEventArgs e) => AddContact_Click(null, null);
-
-        protected void OnSignOut(object sender, RoutedEventArgs e) => InitiateSignOut();
-
-        protected void OnAccountManager(object sender, RoutedEventArgs e) => Forms.Pages.AccountManager.Open();
-
-        protected void OnSwitchUser(object sender, RoutedEventArgs e) => InitiateSignOut(true);
 
         protected async void OnStatus(object sender, RoutedEventArgs e)
         {
@@ -1984,8 +1954,6 @@ namespace Skymu.Theming
         }
 
         #endregion
-
-        private void InitiateSignOut(bool switchuser = false) => vmodel.InitiateSignOut(switchuser);
 
         private void RefreshExtras()
         {

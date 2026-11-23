@@ -138,7 +138,7 @@ namespace Skymu.ViewModels
 
         public event EventHandler CompactRecentsRefreshRequested;
 
-        public event EventHandler<SignOutRequestedEventArgs> SignOutRequested;
+        public event EventHandler SignOutRequested;
 
         public event Action<string> UserCountUpdated;
 
@@ -884,23 +884,14 @@ namespace Skymu.ViewModels
 
         #region Sign out
 
-        public class SignOutRequestedEventArgs : EventArgs
-        {
-            public bool switchuser { get; }
 
-            public SignOutRequestedEventArgs(bool switchuser)
-            {
-                this.switchuser = switchuser;
-            }
-        }
-
-        public void InitiateSignOut(bool switchuser = false)
+        public void InitiateSignOut(bool purge = false)
         {
-            if (!switchuser)
+            if (purge) // we want to delete the credentials
                 CredentialManager.Purge(Universal.CurrentUser, Universal.Plugin.InternalName);
             SoundManager.Play("LOGOUT");
             Universal.SignedIn = false;
-            SignOutRequested?.Invoke(this, new SignOutRequestedEventArgs(switchuser));
+            SignOutRequested?.Invoke(this, new EventArgs());
             _ = UserServerAPI.StopPolling();
         }
         #endregion

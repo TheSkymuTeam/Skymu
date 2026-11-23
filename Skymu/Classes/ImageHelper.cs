@@ -54,7 +54,7 @@ namespace Skymu.Helpers
 
         public static Bitmap GenerateFromArray(byte[] data)
         {
-            if (data is null || data?.Length == 0) return Universal.UnknownAvatar;
+            if (data is null || data?.Length == 0) return Universal.AnonymousAvatar;
             using (var stream = new MemoryStream(data))
             {
                 return new Bitmap(stream);
@@ -63,7 +63,7 @@ namespace Skymu.Helpers
 
         public static Bitmap GenerateAvatarImageFromArray(byte[] data)
         {
-            if (data is null || data?.Length == 0) return Universal.UnknownAvatar;
+            if (data is null || data?.Length == 0) return Universal.AnonymousAvatar;
             return GenerateFromArray(data);
         }
 

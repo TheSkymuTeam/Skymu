@@ -245,9 +245,9 @@ namespace Skymu.Skype6
             SidebarTabs.ColumnDefinitions[0].MinWidth = 93;
         }
 
-        protected override void ShowLogin(bool switchuser)
+        protected override void ShowLogin()
         {
-            new Login(switchuser).Show();
+            new Login().Show();
         }
 
         public Main()

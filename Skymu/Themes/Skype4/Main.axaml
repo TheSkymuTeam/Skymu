@@ -55,12 +55,12 @@ mc:Ignorable="d">
 			<Setter Property="HoverIndex" Value="1" />
 			<Setter Property="PressedIndex" Value="2" />
 		</Style>
-<Style Selector="controls|SliceControl.addButtonHover">
-    <Setter Property="TextColor" Value="{DynamicResource Text.HighContrast}" />
-</Style>
-<Style Selector="controls|SliceControl.addButtonHover:pointerover">
-    <Setter Property="TextColor" Value="#0099ff" />
-</Style>
+		<Style Selector="controls|SliceControl.addButtonHover">
+			<Setter Property="TextColor" Value="{DynamicResource Text.HighContrast}" />
+		</Style>
+		<Style Selector="controls|SliceControl.addButtonHover:pointerover">
+			<Setter Property="TextColor" Value="#0099ff" />
+		</Style>
 	</Window.Styles>
 	<Window.Resources>
 		<ControlTheme x:Key="NoInsetListBox" TargetType="ListBox">
@@ -75,10 +75,10 @@ mc:Ignorable="d">
 						Padding="0"
 						VerticalContentAlignment="Bottom"
 						Background="{DynamicResource Card.Background}"
-						
+
 						Focusable="false">
 							<ItemsPresenter Name="PART_ItemsPresenter"
-                ItemsPanel="{TemplateBinding ItemsPanel}" />
+											ItemsPanel="{TemplateBinding ItemsPanel}" />
 						</ScrollViewer>
 					</ControlTemplate>
 				</Setter.Value>
@@ -136,11 +136,11 @@ mc:Ignorable="d">
 			<Setter Property="TextTrimming" Value="CharacterEllipsis" />
 		</ControlTheme>
 		<ImageBrush x:Key="SBrush"
-    Source="Assets/Themeable/Main/selection-background.png"
-    Stretch="Fill" />
-<converters:BoolToBrushConverter x:Key="SelectedToSelectionBrush"
-    TrueBrush="{StaticResource SBrush}"
-    FalseBrush="{x:Null}" />
+					Source="Assets/Themeable/Main/selection-background.png"
+					Stretch="Fill" />
+		<converters:BoolToBrushConverter x:Key="SelectedToSelectionBrush"
+										 TrueBrush="{StaticResource SBrush}"
+										 FalseBrush="{x:Null}" />
 		<converters:ByteArrayToImageSourceConverter x:Key="AvatarConverter" />
 		<converters:MsgByteArrayToImageConverter x:Key="MsgByteArrayToImageConverter" />
 		<converters:SenderToColorConverter x:Key="SenderToColorConverter" />
@@ -149,11 +149,11 @@ mc:Ignorable="d">
 		<converters:NullDependentBoolean x:Key="NullDependentBoolean" />
 		<converters:StatusToTextConverter x:Key="StatIntToText" />
 		<converters:BoolToWhiteForegroundConverter x:Key="SelectedToWhite"
-    TrueBrush="White"
-    FalseBrushResourceKey="Text.VeryHighContrast" />
-<converters:BoolToWhiteForegroundConverter x:Key="SelectedToWhiteFromLow"
-    TrueBrush="White"
-    FalseBrushResourceKey="Text.LowContrast" />
+												   TrueBrush="White"
+												   FalseBrushResourceKey="Text.VeryHighContrast" />
+		<converters:BoolToWhiteForegroundConverter x:Key="SelectedToWhiteFromLow"
+												   TrueBrush="White"
+												   FalseBrushResourceKey="Text.LowContrast" />
 		<converters:BoolToDoubleConverter x:Key="BoolToAngle" TrueValue="90" FalseValue="0" />
 		<converters:ForwardedMessageStatusConverter x:Key="ForwardedMessageStatusConverter" />
 		<converters:HalfValueConverter x:Key="HalfValueConverter" />
@@ -167,7 +167,7 @@ mc:Ignorable="d">
 		<converters:FormatFullTextConverter x:Key="FormatFullTextConverter" ViewerStyle="{StaticResource TextBlockViewerStyle}" />
 		<converters:FormatFullActionMessageConverter x:Key="FormatFullActionMessageConverter" ViewerStyle="{StaticResource TextBlockViewerStyle}" />
 
-		
+
 		<!--  COMPACT RECENTS TEMPLATES START  -->
 		<DataTemplate x:Key="DateHeaderTemplate" DataType="{x:Type global:DateHeaderItem}">
 			<Border
@@ -178,8 +178,8 @@ mc:Ignorable="d">
 				<TextBlock
 				Margin="2,0,0,1"
 				VerticalAlignment="Center"
-				
-				
+
+
 				Foreground="{DynamicResource Text.VeryHighContrast}"
 				Text="{Binding DateText}" />
 			</Border>
@@ -208,8 +208,8 @@ mc:Ignorable="d">
 				Grid.Column="1"
 				Margin="6,0,0,0"
 				VerticalAlignment="Center"
-				
-				
+
+
 				Foreground="{DynamicResource Text.VeryHighContrast}"
 				Text="{Binding DisplayName}"
 				TextTrimming="CharacterEllipsis" />
@@ -239,18 +239,18 @@ mc:Ignorable="d">
 				Grid.Column="1"
 				Margin="6,0,0,0"
 				VerticalAlignment="Center"
-				
-				
+
+
 				Foreground="{DynamicResource Text.VeryHighContrast}"
 				Text="{Binding DisplayName}"
 				TextTrimming="CharacterEllipsis" />
 			</Grid>
 		</DataTemplate>
 		<!--  COMPACT RECENTS TEMPLATES END  -->
-		
+
 	</Window.Resources>
 	<Window.DataTemplates>
-				<!--  User template  -->
+		<!--  User template  -->
 		<DataTemplate DataType="{x:Type yggdrasil:DirectMessage}">
 			<Grid Height="32" Margin="2,4,0,4">
 				<Grid.RowDefinitions>
@@ -400,49 +400,49 @@ mc:Ignorable="d">
 		</DataTemplate>
 		<!--  Server template  -->
 		<DataTemplate DataType="{x:Type global:CategoryHeaderItem}">
-								<Border
-								Height="20"
-								Margin="0"
-								Padding="8,0"
-								Background="{DynamicResource Sidebar.Header}">
-									<TextBlock
-									Margin="2,0,0,1"
-									VerticalAlignment="Center"
-									
-									
-									Foreground="{DynamicResource Text.VeryHighContrast}"
-									Text="{Binding CategoryName}" />
-								</Border>
-							</DataTemplate>
-							<DataTemplate DataType="{x:Type yggdrasil:ServerChannel}">
-								<Grid Height="22" Margin="0,0,0,0">
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="24" />
-										<ColumnDefinition Width="*" />
-									</Grid.ColumnDefinitions>
-									<controls:SliceControl
-									Grid.Column="0"
-									Width="14"
-									Margin="10,0,0,0"
-									HorizontalAlignment="Left"
-									DefaultIndex="{Binding ChannelType, Converter={StaticResource ChannelTypeConverter}}"
-									ElementCount="11"
-									HoverIndex="-1"
-									PressedIndex="-1"
-									SliceMode="0"
-									Source="Assets/Universal/Icon/skype-channel.png"
-									StackDirection="Horizontal" />
-									<TextBlock
-									x:Name="channelText"
-									Grid.Column="1"
-									Margin="10,0,0,0"
-									VerticalAlignment="Center"
-									
-									Theme="{StaticResource ContactStatusStyle}"
-									Foreground="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=TreeViewItem}, Converter={StaticResource SelectedToWhite}}"
-									Text="{Binding DisplayName}" />
-								</Grid>
-							</DataTemplate>
+			<Border
+			Height="20"
+			Margin="0"
+			Padding="8,0"
+			Background="{DynamicResource Sidebar.Header}">
+				<TextBlock
+				Margin="2,0,0,1"
+				VerticalAlignment="Center"
+
+
+				Foreground="{DynamicResource Text.VeryHighContrast}"
+				Text="{Binding CategoryName}" />
+			</Border>
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type yggdrasil:ServerChannel}">
+			<Grid Height="22" Margin="0,0,0,0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="24" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+				<controls:SliceControl
+				Grid.Column="0"
+				Width="14"
+				Margin="10,0,0,0"
+				HorizontalAlignment="Left"
+				DefaultIndex="{Binding ChannelType, Converter={StaticResource ChannelTypeConverter}}"
+				ElementCount="11"
+				HoverIndex="-1"
+				PressedIndex="-1"
+				SliceMode="0"
+				Source="Assets/Universal/Icon/skype-channel.png"
+				StackDirection="Horizontal" />
+				<TextBlock
+				x:Name="channelText"
+				Grid.Column="1"
+				Margin="10,0,0,0"
+				VerticalAlignment="Center"
+
+				Theme="{StaticResource ContactStatusStyle}"
+				Foreground="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=TreeViewItem}, Converter={StaticResource SelectedToWhite}}"
+				Text="{Binding DisplayName}" />
+			</Grid>
+		</DataTemplate>
 		<TreeDataTemplate DataType="{x:Type yggdrasil:Server}" ItemsSource="{Binding GroupedChannels}">
 
 			<Grid Height="32" Margin="2,4,0,4">
@@ -516,18 +516,18 @@ mc:Ignorable="d">
 								Width="12"
 								Height="12"
 								Source="Assets/Universal/Main/collapse-toggle-background.png" />
-<Image
-    x:Name="ToggleImage"
-    Width="12"
-    Height="12"
-    RenderTransformOrigin="0.5,0.5"
-    Source="Assets/Universal/Main/collapse-toggle-arrow.png">
-    <Image.RenderTransform>
-        <RotateTransform Angle="{Binding IsChecked,
-            RelativeSource={RelativeSource AncestorType=ToggleButton},
-            Converter={StaticResource BoolToAngle}}" />
-    </Image.RenderTransform>
-</Image>
+								<Image
+								x:Name="ToggleImage"
+								Width="12"
+								Height="12"
+								RenderTransformOrigin="0.5,0.5"
+								Source="Assets/Universal/Main/collapse-toggle-arrow.png">
+									<Image.RenderTransform>
+										<RotateTransform Angle="{Binding IsChecked,
+										RelativeSource={RelativeSource AncestorType=ToggleButton},
+										Converter={StaticResource BoolToAngle}}" />
+									</Image.RenderTransform>
+								</Image>
 							</Grid>
 						</ControlTemplate>
 					</ToggleButton.Template>
@@ -536,283 +536,283 @@ mc:Ignorable="d">
 		</TreeDataTemplate>
 		<!--  CONTACT ITEM TEMPLATE END  -->
 		<!--  CONVERSATION ITEM TEMPLATES START  -->
-<!--  MessageItem Template  -->
-<DataTemplate DataType="{x:Type yggdrasil:ActionMessage}">
-	<Grid HorizontalAlignment="Stretch">
-		<Grid
-		x:Name="ConversationGrid"
-		MaxWidth="626"
-		Margin="0,10,65,0"
-		HorizontalAlignment="Stretch">
-			<!--  148 + 428 + 50  -->
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-			</Grid.RowDefinitions>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="148" />
-				<ColumnDefinition Width="*" MaxWidth="428" />
-				<ColumnDefinition Width="50" />
-			</Grid.ColumnDefinitions>
-			<!--  Center area  -->
-			<!--  Reply header  -->
-			<Grid
-			Grid.Row="0"
-			Grid.Column="1"
-			Margin="0,0,20,2"
-			IsVisible="{Binding ParentMessage, Converter={StaticResource NullDependentVisibilityConverter}}">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition Width="*" />
-				</Grid.ColumnDefinitions>
-				<Image
-				Grid.Column="0"
-				Width="12"
-				Margin="0,0,6,0"
-				VerticalAlignment="Center"
+		<!--  MessageItem Template  -->
+		<DataTemplate DataType="{x:Type yggdrasil:ActionMessage}">
+			<Grid HorizontalAlignment="Stretch">
+				<Grid
+				x:Name="ConversationGrid"
+				MaxWidth="626"
+				Margin="0,10,65,0"
+				HorizontalAlignment="Stretch">
+					<!--  148 + 428 + 50  -->
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="148" />
+						<ColumnDefinition Width="*" MaxWidth="428" />
+						<ColumnDefinition Width="50" />
+					</Grid.ColumnDefinitions>
+					<!--  Center area  -->
+					<!--  Reply header  -->
+					<Grid
+					Grid.Row="0"
+					Grid.Column="1"
+					Margin="0,0,20,2"
+					IsVisible="{Binding ParentMessage, Converter={StaticResource NullDependentVisibilityConverter}}">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="*" />
+						</Grid.ColumnDefinitions>
+						<Image
+						Grid.Column="0"
+						Width="12"
+						Margin="0,0,6,0"
+						VerticalAlignment="Center"
 
-				Source="Assets/Themeable/Main/reply-arrow.png" />
+						Source="Assets/Themeable/Main/reply-arrow.png" />
+						<TextBlock
+						Grid.Column="1"
+
+
+						Foreground="{DynamicResource Text.LowContrast}"
+						LineHeight="1"
+						TextTrimming="CharacterEllipsis"
+						TextWrapping="NoWrap">
+							<TextBlock.Text>
+								<MultiBinding StringFormat="Replying to {0} - &quot;{1}&quot;">
+									<Binding Path="ParentMessage.Author.DisplayName" />
+									<Binding Converter="{StaticResource ReplyBodyConverter}" Path="ParentMessage.Text" />
+								</MultiBinding>
+							</TextBlock.Text>
+						</TextBlock>
+					</Grid>
+					<!--  Message body + attachment  -->
+					<StackPanel
+					Grid.Row="1"
+					Grid.Column="1"
+					Margin="0,0,20,0"
+					Orientation="Vertical">
+						<ContentControl Content="{Binding Converter={StaticResource FormatFullActionMessageConverter}}" IsVisible="{Binding Text, Converter={StaticResource NullDependentVisibilityConverter}}" />
+						<Image
+						MaxWidth="300"
+						MaxHeight="300"
+						Margin="{Binding Converter={StaticResource NullDependentMarginConverter}}"
+						HorizontalAlignment="Left"
+						Cursor="Hand"
+						Source="{Binding Attachments, Converter={StaticResource MsgByteArrayToImageConverter}}"
+						Stretch="Uniform"
+						PointerReleased="OpenImage_Click"
+						IsVisible="{Binding Attachments, Converter={StaticResource NullDependentVisibilityConverter}}">
+						</Image>
+					</StackPanel>
+					<!--  Timestamp  -->
+					<Grid
+					Grid.Row="1"
+					Grid.Column="2"
+					HorizontalAlignment="Left"
+					VerticalAlignment="Top">
+						<TextBlock
+
+
+						Foreground="{DynamicResource Text.LowContrast}"
+						Text="{Binding Time, StringFormat=h:mm tt}"
+						IsVisible="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}, ConverterParameter=invert}" />
+						<controls:SliceControl
+						Width="10"
+						Height="10"
+						AnimationFps="60"
+						DefaultIndex="0"
+						ElementCount="72"
+						IsAnimation="True"
+						SliceMode="0"
+						Source="Assets/Universal/Main/loading.png"
+						StackDirection="Vertical"
+						IsVisible="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}}" />
+					</Grid>
+				</Grid>
+			</Grid>
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type yggdrasil:Message}">
+			<Grid
+			HorizontalAlignment="Stretch"
+			ContextMenu="{DynamicResource MessageContextMenu}"
+			Tag="{DynamicResource Lang}">
+				<Grid
+				x:Name="ConversationGrid"
+				MaxWidth="626"
+				Margin="0,10,65,0"
+				HorizontalAlignment="Stretch">
+					<!--  148 + 428 + 50  -->
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="148" />
+						<ColumnDefinition Width="*" MaxWidth="428" />
+						<ColumnDefinition Width="50" />
+					</Grid.ColumnDefinitions>
+					<!--  Sender name  -->
+					<TextBlock
+					Grid.Row="1"
+					Grid.Column="0"
+					Margin="0,0,16,0"
+					HorizontalAlignment="Right"
+					VerticalAlignment="Top"
+
+
+					TextTrimming="CharacterEllipsis">
+						<TextBlock.Foreground>
+							<MultiBinding Converter="{StaticResource SenderToColorConverter}">
+								<Binding Path="Author.Identifier" />
+								<Binding Path="IsForwarded" />
+							</MultiBinding>
+						</TextBlock.Foreground>
+						<TextBlock.Text>
+							<MultiBinding Converter="{StaticResource ForwardedMessageStatusConverter}">
+								<Binding Path="Author.DisplayName" />
+								<Binding Path="IsForwarded" />
+							</MultiBinding>
+						</TextBlock.Text>
+						<TextBlock.IsVisible>
+							<MultiBinding Converter="{StaticResource IDToVisibilityConverter}">
+								<Binding Path="PreviousMessageIdentifier" />
+								<Binding Path="Author.Identifier" />
+								<Binding Path="PreviousMessageIsAction" />
+							</MultiBinding>
+						</TextBlock.IsVisible>
+					</TextBlock>
+					<!--  Center area  -->
+					<!--  Reply header  -->
+					<Grid
+					Grid.Row="0"
+					Grid.Column="1"
+					Margin="0,0,20,2"
+					IsVisible="{Binding ParentMessage, Converter={StaticResource NullDependentVisibilityConverter}}">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="*" />
+						</Grid.ColumnDefinitions>
+						<Image
+						Grid.Column="0"
+						Width="12"
+						Margin="0,0,6,0"
+						VerticalAlignment="Center"
+
+						Source="Assets/Themeable/Main/reply-arrow.png" />
+						<TextBlock
+						Grid.Column="1"
+
+
+						Foreground="{DynamicResource Text.LowContrast}"
+						LineHeight="1"
+						TextTrimming="CharacterEllipsis"
+						TextWrapping="NoWrap">
+							<TextBlock.Text>
+								<MultiBinding StringFormat="Replying to {0} - &quot;{1}&quot;">
+									<Binding Path="ParentMessage.Author.DisplayName" />
+									<Binding Converter="{StaticResource ReplyBodyConverter}" Path="ParentMessage.Text" />
+								</MultiBinding>
+							</TextBlock.Text>
+						</TextBlock>
+					</Grid>
+					<!--  Message body + attachment  -->
+					<StackPanel
+					Grid.Row="1"
+					Grid.Column="1"
+					Margin="0,0,20,0"
+					Orientation="Vertical">
+						<ContentControl Content="{Binding Text, Converter={StaticResource FormatFullTextConverter}}" IsVisible="{Binding Text, Converter={StaticResource NullDependentVisibilityConverter}}" />
+						<Image
+						MaxWidth="300"
+						MaxHeight="300"
+						Margin="{Binding Text, Converter={StaticResource NullDependentMarginConverter}}"
+						HorizontalAlignment="Left"
+						Cursor="Hand"
+						Source="{Binding Attachments, Converter={StaticResource MsgByteArrayToImageConverter}}"
+						Stretch="Uniform"
+						PointerReleased="OpenImage_Click"
+						IsVisible="{Binding Attachments, Converter={StaticResource NullDependentVisibilityConverter}}">
+						</Image>
+					</StackPanel>
+					<!--  Timestamp  -->
+					<Grid
+					Grid.Row="1"
+					Grid.Column="2"
+					HorizontalAlignment="Left"
+					VerticalAlignment="Top">
+						<TextBlock
+
+
+						Foreground="{DynamicResource Text.LowContrast}"
+						Text="{Binding Time, StringFormat=h:mm tt}"
+						IsVisible="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}, ConverterParameter=invert}" />
+						<controls:SliceControl
+						Width="10"
+						Height="10"
+						AnimationFps="60"
+						DefaultIndex="0"
+						ElementCount="72"
+						IsAnimation="True"
+						SliceMode="0"
+						Source="Assets/Universal/Main/loading.png"
+						StackDirection="Vertical"
+						IsVisible="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}}" />
+					</Grid>
+				</Grid>
+			</Grid>
+		</DataTemplate>
+		<!--  CallStartedItem Template  -->
+		<DataTemplate DataType="{x:Type yggdrasil:CallStartedNotice}">
+			<Grid Margin="0,9.5,0,0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="114" />
+					<ColumnDefinition Width="430" />
+					<ColumnDefinition Width="80" />
+				</Grid.ColumnDefinitions>
 				<TextBlock
 				Grid.Column="1"
-				
-				
-				Foreground="{DynamicResource Text.LowContrast}"
-				LineHeight="1"
-				TextTrimming="CharacterEllipsis"
-				TextWrapping="NoWrap">
-					<TextBlock.Text>
-						<MultiBinding StringFormat="Replying to {0} - &quot;{1}&quot;">
-							<Binding Path="ParentMessage.Author.DisplayName" />
-							<Binding Converter="{StaticResource ReplyBodyConverter}" Path="ParentMessage.Text" />
-						</MultiBinding>
-					</TextBlock.Text>
-				</TextBlock>
-			</Grid>
-			<!--  Message body + attachment  -->
-			<StackPanel
-			Grid.Row="1"
-			Grid.Column="1"
-			Margin="0,0,20,0"
-			Orientation="Vertical">
-				<ContentControl Content="{Binding Converter={StaticResource FormatFullActionMessageConverter}}" IsVisible="{Binding Text, Converter={StaticResource NullDependentVisibilityConverter}}" />
-				<Image
-				MaxWidth="300"
-				MaxHeight="300"
-				Margin="{Binding Converter={StaticResource NullDependentMarginConverter}}"
-				HorizontalAlignment="Left"
-				Cursor="Hand"
-				Source="{Binding Attachments, Converter={StaticResource MsgByteArrayToImageConverter}}"
-				Stretch="Uniform"
-				PointerReleased="OpenImage_Click"
-				IsVisible="{Binding Attachments, Converter={StaticResource NullDependentVisibilityConverter}}">
-				</Image>
-			</StackPanel>
-			<!--  Timestamp  -->
-			<Grid
-			Grid.Row="1"
-			Grid.Column="2"
-			HorizontalAlignment="Left"
-			VerticalAlignment="Top">
-				<TextBlock
-				
-				
-				Foreground="{DynamicResource Text.LowContrast}"
-				Text="{Binding Time, StringFormat=h:mm tt}"
-				IsVisible="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}, ConverterParameter=invert}" />
-				<controls:SliceControl
-				Width="10"
-				Height="10"
-				AnimationFps="60"
-				DefaultIndex="0"
-				ElementCount="72"
-				IsAnimation="True"
-				SliceMode="0"
-				Source="Assets/Universal/Main/loading.png"
-				StackDirection="Vertical"
-				IsVisible="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}}" />
-			</Grid>
-		</Grid>
-	</Grid>
-</DataTemplate>
-<DataTemplate DataType="{x:Type yggdrasil:Message}">
-	<Grid
-	HorizontalAlignment="Stretch"
-	ContextMenu="{DynamicResource MessageContextMenu}"
-	Tag="{DynamicResource Lang}">
-		<Grid
-		x:Name="ConversationGrid"
-		MaxWidth="626"
-		Margin="0,10,65,0"
-		HorizontalAlignment="Stretch">
-			<!--  148 + 428 + 50  -->
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-			</Grid.RowDefinitions>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="148" />
-				<ColumnDefinition Width="*" MaxWidth="428" />
-				<ColumnDefinition Width="50" />
-			</Grid.ColumnDefinitions>
-			<!--  Sender name  -->
-			<TextBlock
-			Grid.Row="1"
-			Grid.Column="0"
-			Margin="0,0,16,0"
-			HorizontalAlignment="Right"
-			VerticalAlignment="Top"
-			
-			
-			TextTrimming="CharacterEllipsis">
-				<TextBlock.Foreground>
-					<MultiBinding Converter="{StaticResource SenderToColorConverter}">
-						<Binding Path="Author.Identifier" />
-						<Binding Path="IsForwarded" />
-					</MultiBinding>
-				</TextBlock.Foreground>
-				<TextBlock.Text>
-					<MultiBinding Converter="{StaticResource ForwardedMessageStatusConverter}">
-						<Binding Path="Author.DisplayName" />
-						<Binding Path="IsForwarded" />
-					</MultiBinding>
-				</TextBlock.Text>
-				<TextBlock.IsVisible>
-					<MultiBinding Converter="{StaticResource IDToVisibilityConverter}">
-						<Binding Path="PreviousMessageIdentifier" />
-						<Binding Path="Author.Identifier" />
-						<Binding Path="PreviousMessageIsAction" />
-					</MultiBinding>
-				</TextBlock.IsVisible>
-			</TextBlock>
-			<!--  Center area  -->
-			<!--  Reply header  -->
-			<Grid
-			Grid.Row="0"
-			Grid.Column="1"
-			Margin="0,0,20,2"
-			IsVisible="{Binding ParentMessage, Converter={StaticResource NullDependentVisibilityConverter}}">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition Width="*" />
-				</Grid.ColumnDefinitions>
-				<Image
-				Grid.Column="0"
-				Width="12"
-				Margin="0,0,6,0"
-				VerticalAlignment="Center"
 
-				Source="Assets/Themeable/Main/reply-arrow.png" />
+
+				Foreground="{DynamicResource Text.LowContrast}"
+				Text="{Binding StartedBy, StringFormat='Call started by: {0}'}" />
+				<TextBlock
+				Grid.Column="2"
+				HorizontalAlignment="Left"
+				VerticalAlignment="Top"
+
+
+				Foreground="{DynamicResource Text.LowContrast}"
+				Text="{Binding Time, StringFormat=h:mm tt}" />
+			</Grid>
+		</DataTemplate>
+		<!--  CallEndedItem Template  -->
+		<DataTemplate DataType="{x:Type yggdrasil:CallEndedNotice}">
+			<Grid Margin="0,9.5,0,0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="114" />
+					<ColumnDefinition Width="430" />
+					<ColumnDefinition Width="80" />
+				</Grid.ColumnDefinitions>
 				<TextBlock
 				Grid.Column="1"
-				
-				
+
+
 				Foreground="{DynamicResource Text.LowContrast}"
-				LineHeight="1"
-				TextTrimming="CharacterEllipsis"
-				TextWrapping="NoWrap">
-					<TextBlock.Text>
-						<MultiBinding StringFormat="Replying to {0} - &quot;{1}&quot;">
-							<Binding Path="ParentMessage.Author.DisplayName" />
-							<Binding Converter="{StaticResource ReplyBodyConverter}" Path="ParentMessage.Text" />
-						</MultiBinding>
-					</TextBlock.Text>
-				</TextBlock>
-			</Grid>
-			<!--  Message body + attachment  -->
-			<StackPanel
-			Grid.Row="1"
-			Grid.Column="1"
-			Margin="0,0,20,0"
-			Orientation="Vertical">
-				<ContentControl Content="{Binding Text, Converter={StaticResource FormatFullTextConverter}}" IsVisible="{Binding Text, Converter={StaticResource NullDependentVisibilityConverter}}" />
-				<Image
-				MaxWidth="300"
-				MaxHeight="300"
-				Margin="{Binding Text, Converter={StaticResource NullDependentMarginConverter}}"
-				HorizontalAlignment="Left"
-				Cursor="Hand"
-				Source="{Binding Attachments, Converter={StaticResource MsgByteArrayToImageConverter}}"
-				Stretch="Uniform"
-				PointerReleased="OpenImage_Click"
-				IsVisible="{Binding Attachments, Converter={StaticResource NullDependentVisibilityConverter}}">
-				</Image>
-			</StackPanel>
-			<!--  Timestamp  -->
-			<Grid
-			Grid.Row="1"
-			Grid.Column="2"
-			HorizontalAlignment="Left"
-			VerticalAlignment="Top">
+				Text="{Binding Duration, StringFormat='Call ended, duration: {0}'}" />
 				<TextBlock
-				
-				
+				Grid.Column="2"
+				HorizontalAlignment="Left"
+				VerticalAlignment="Top"
+
+
 				Foreground="{DynamicResource Text.LowContrast}"
-				Text="{Binding Time, StringFormat=h:mm tt}"
-				IsVisible="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}, ConverterParameter=invert}" />
-				<controls:SliceControl
-				Width="10"
-				Height="10"
-				AnimationFps="60"
-				DefaultIndex="0"
-				ElementCount="72"
-				IsAnimation="True"
-				SliceMode="0"
-				Source="Assets/Universal/Main/loading.png"
-				StackDirection="Vertical"
-				IsVisible="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}}" />
+				Text="{Binding Time, StringFormat=h:mm tt}" />
 			</Grid>
-		</Grid>
-	</Grid>
-</DataTemplate>
-<!--  CallStartedItem Template  -->
-<DataTemplate DataType="{x:Type yggdrasil:CallStartedNotice}">
-	<Grid Margin="0,9.5,0,0">
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="114" />
-			<ColumnDefinition Width="430" />
-			<ColumnDefinition Width="80" />
-		</Grid.ColumnDefinitions>
-		<TextBlock
-		Grid.Column="1"
-		
-		
-		Foreground="{DynamicResource Text.LowContrast}"
-		Text="{Binding StartedBy, StringFormat='Call started by: {0}'}" />
-		<TextBlock
-		Grid.Column="2"
-		HorizontalAlignment="Left"
-		VerticalAlignment="Top"
-		
-		
-		Foreground="{DynamicResource Text.LowContrast}"
-		Text="{Binding Time, StringFormat=h:mm tt}" />
-	</Grid>
-</DataTemplate>
-<!--  CallEndedItem Template  -->
-<DataTemplate DataType="{x:Type yggdrasil:CallEndedNotice}">
-	<Grid Margin="0,9.5,0,0">
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="114" />
-			<ColumnDefinition Width="430" />
-			<ColumnDefinition Width="80" />
-		</Grid.ColumnDefinitions>
-		<TextBlock
-		Grid.Column="1"
-		
-		
-		Foreground="{DynamicResource Text.LowContrast}"
-		Text="{Binding Duration, StringFormat='Call ended, duration: {0}'}" />
-		<TextBlock
-		Grid.Column="2"
-		HorizontalAlignment="Left"
-		VerticalAlignment="Top"
-		
-		
-		Foreground="{DynamicResource Text.LowContrast}"
-		Text="{Binding Time, StringFormat=h:mm tt}" />
-	</Grid>
-</DataTemplate>
-<!--  CONVERSATION ITEM TEMPLATE END  -->
+		</DataTemplate>
+		<!--  CONVERSATION ITEM TEMPLATE END  -->
 	</Window.DataTemplates>
 	<Grid x:Name="FrameArea">
 		<Grid
@@ -944,7 +944,7 @@ mc:Ignorable="d">
 						<Grid x:Name="ContentArea">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition
-								
+
 								Width="300"
 								MinWidth="160" />
 								<ColumnDefinition  Width="4" />
@@ -1098,8 +1098,8 @@ mc:Ignorable="d">
 													Background="Transparent"
 													BorderThickness="0"
 													Cursor="IBeam"
-													
-													
+
+
 													Foreground="{DynamicResource Text.LowContrast}"
 													Text="Add video or write a message for your friends to see."
 													TextAlignment="Center"
@@ -1155,8 +1155,8 @@ mc:Ignorable="d">
 										Margin="5,0,0,0"
 										HorizontalAlignment="Stretch"
 										VerticalAlignment="Center"
-										
-										
+
+
 										Foreground="#FFFFFF"
 										Text="{Binding [sACCOUNT_PANEL_NO_SUBSCRIPTION], Source={StaticResource Lang}, StringFormat=$ 0.00 - {0}}" />
 									</Grid>
@@ -1227,40 +1227,40 @@ mc:Ignorable="d">
 											StackDirection="Vertical"
 											Themeable="True"
 											TopHeight="5" />
-<TextBox
-    x:Name="SearchBox"
-    Grid.Row="0"
-    Padding="29,0,0,0"
-    HorizontalAlignment="Stretch"
-    VerticalContentAlignment="Center"
-    Background="Transparent"
-    BorderThickness="0"
-    Cursor="IBeam"
-    GotFocus="SearchBox_Focused"
-    LostFocus="SearchBox_Unfocused">
-    <TextBox.Template>
-        <ControlTemplate TargetType="TextBox">
-            <Border Background="Transparent" Padding="{TemplateBinding Padding}">
-                <ScrollViewer
-                    HorizontalScrollBarVisibility="Disabled"
-                    VerticalScrollBarVisibility="Disabled">
-                    <TextPresenter
-                        Name="PART_TextPresenter"
-                        VerticalAlignment="Center"
-                        Text="{TemplateBinding Text, Mode=TwoWay}"
-                        CaretIndex="{TemplateBinding CaretIndex}"
-                        SelectionStart="{TemplateBinding SelectionStart}"
-                        SelectionEnd="{TemplateBinding SelectionEnd}"
-                        CaretBrush="{TemplateBinding CaretBrush}"
-                        SelectionBrush="{TemplateBinding SelectionBrush}"
-                        SelectionForegroundBrush="{TemplateBinding SelectionForegroundBrush}"
-                        TextAlignment="{TemplateBinding TextAlignment}"
-                        TextWrapping="NoWrap" />
-                </ScrollViewer>
-            </Border>
-        </ControlTemplate>
-    </TextBox.Template>
-</TextBox>
+											<TextBox
+											x:Name="SearchBox"
+											Grid.Row="0"
+											Padding="29,0,0,0"
+											HorizontalAlignment="Stretch"
+											VerticalContentAlignment="Center"
+											Background="Transparent"
+											BorderThickness="0"
+											Cursor="IBeam"
+											GotFocus="SearchBox_Focused"
+											LostFocus="SearchBox_Unfocused">
+												<TextBox.Template>
+													<ControlTemplate TargetType="TextBox">
+														<Border Background="Transparent" Padding="{TemplateBinding Padding}">
+															<ScrollViewer
+															HorizontalScrollBarVisibility="Disabled"
+															VerticalScrollBarVisibility="Disabled">
+																<TextPresenter
+																Name="PART_TextPresenter"
+																VerticalAlignment="Center"
+																Text="{TemplateBinding Text, Mode=TwoWay}"
+																CaretIndex="{TemplateBinding CaretIndex}"
+																SelectionStart="{TemplateBinding SelectionStart}"
+																SelectionEnd="{TemplateBinding SelectionEnd}"
+																CaretBrush="{TemplateBinding CaretBrush}"
+																SelectionBrush="{TemplateBinding SelectionBrush}"
+																SelectionForegroundBrush="{TemplateBinding SelectionForegroundBrush}"
+																TextAlignment="{TemplateBinding TextAlignment}"
+																TextWrapping="NoWrap" />
+															</ScrollViewer>
+														</Border>
+													</ControlTemplate>
+												</TextBox.Template>
+											</TextBox>
 										</Grid>
 									</Grid>
 									<Grid x:Name="SidebarTabs" Margin="0,4,0,0">
@@ -1347,7 +1347,7 @@ mc:Ignorable="d">
 										x:Name="ConversationList"
 										BorderThickness="0"
 										PointerReleased="ConversationList_ItemClicked"
-										
+
 										ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 										Theme="{StaticResource NoInsetListBox}">
 											<ListBox.ItemsPanel>
@@ -1364,17 +1364,17 @@ mc:Ignorable="d">
 													<Setter Property="Template">
 														<Setter.Value>
 															<ControlTemplate TargetType="ListBoxItem">
-    <Border x:Name="ItemBorder"
-            Background="{Binding IsSelected,
-                RelativeSource={RelativeSource TemplatedParent},
-                Converter={StaticResource SelectedToSelectionBrush}}">
-        <ContentPresenter Name="PART_ContentPresenter"
-                          Content="{TemplateBinding Content}"
-                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
-    </Border>
-</ControlTemplate>
+																<Border x:Name="ItemBorder"
+																		Background="{Binding IsSelected,
+																		RelativeSource={RelativeSource TemplatedParent},
+																		Converter={StaticResource SelectedToSelectionBrush}}">
+																	<ContentPresenter Name="PART_ContentPresenter"
+																					  Content="{TemplateBinding Content}"
+																					  ContentTemplate="{TemplateBinding ContentTemplate}"
+																					  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+																					  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+																</Border>
+															</ControlTemplate>
 														</Setter.Value>
 													</Setter>
 												</Style>
@@ -1392,24 +1392,24 @@ mc:Ignorable="d">
 													<Setter Property="IsExpanded" Value="False" />
 													<Setter Property="Padding" Value="0" />
 													<Setter Property="BorderThickness" Value="0" />
-													
+
 													<Setter Property="Template">
 														<Setter.Value>
 															<ControlTemplate TargetType="TreeViewItem">
-    <StackPanel>
-        <Border x:Name="ItemBorder"
-                Background="{Binding IsSelected,
-                    RelativeSource={RelativeSource TemplatedParent},
-                    Converter={StaticResource SelectedToSelectionBrush}}">
-            <ContentPresenter Name="PART_HeaderPresenter"
-                              Content="{TemplateBinding Header}"
-                              ContentTemplate="{TemplateBinding HeaderTemplate}" />
-        </Border>
-        <ItemsPresenter Name="PART_ItemsPresenter"
-                        ItemsPanel="{TemplateBinding ItemsPanel}"
-                        IsVisible="{TemplateBinding IsExpanded}" />
-    </StackPanel>
-</ControlTemplate>
+																<StackPanel>
+																	<Border x:Name="ItemBorder"
+																			Background="{Binding IsSelected,
+																			RelativeSource={RelativeSource TemplatedParent},
+																			Converter={StaticResource SelectedToSelectionBrush}}">
+																		<ContentPresenter Name="PART_HeaderPresenter"
+																						  Content="{TemplateBinding Header}"
+																						  ContentTemplate="{TemplateBinding HeaderTemplate}" />
+																	</Border>
+																	<ItemsPresenter Name="PART_ItemsPresenter"
+																					ItemsPanel="{TemplateBinding ItemsPanel}"
+																					IsVisible="{TemplateBinding IsExpanded}" />
+																</StackPanel>
+															</ControlTemplate>
 														</Setter.Value>
 													</Setter>
 												</Style>
@@ -1428,7 +1428,7 @@ mc:Ignorable="d">
 												<StackPanel Orientation="Vertical">
 													<!--  TODO lang  -->
 													<TextBlock
-													
+
 													FontSize="12"
 													FontWeight="Bold"
 													Foreground="{DynamicResource Text.HighContrast}"
@@ -1436,28 +1436,28 @@ mc:Ignorable="d">
 													TextAlignment="Center" />
 													<TextBlock
 													Margin="0,25,0,0"
-													
-													
+
+
 													Foreground="{DynamicResource Text.HighContrast}"
 													Text="This is where you'll see a list of all the conversations you're having."
 													TextAlignment="Center"
 													TextWrapping="Wrap" />
 													<TextBlock
 													Margin="0,25,0,0"
-													
-													
+
+
 													Foreground="{DynamicResource Text.HighContrast}"
 													TextAlignment="Center"
 													TextWrapping="Wrap">
 														<!--  Sorry non-word wrap users. This had to be done to avoid a gap.  -->
 														<Run Text="It's easy to start a conversation. Go to your " />
 														<InlineUIContainer>
-    <TextBlock
-        Cursor="Hand"
-        Foreground="{DynamicResource Text.Hyperlink}"
-        PointerReleased="OnContactsLink"
-        Text="Contacts" />
-</InlineUIContainer>
+															<TextBlock
+															Cursor="Hand"
+															Foreground="{DynamicResource Text.Hyperlink}"
+															PointerReleased="OnContactsLink"
+															Text="Contacts" />
+														</InlineUIContainer>
 														<Run Text=", click on someone, then click on one of the buttons to call, video call or send them a message." />
 													</TextBlock>
 													<Grid Margin="0,8,0,12" HorizontalAlignment="Center">
@@ -1467,7 +1467,7 @@ mc:Ignorable="d">
 														<controls:SliceControl
 														DefaultIndex="0"
 														ElementCount="5"
-														
+
 														HoverIndex="1"
 														LeftWidth="10"
 														PointerReleased="CloseConversationHint"
@@ -1642,7 +1642,7 @@ mc:Ignorable="d">
 								<Grid.RowDefinitions>
 									<RowDefinition  Height="24" />
 									<RowDefinition
-									
+
 									MinHeight="108"
 									MaxHeight="172" />
 									<RowDefinition  Height="4" />
@@ -1796,8 +1796,8 @@ mc:Ignorable="d">
 																Source="Assets/Universal/Main/mood.png" />
 																<TextBlock
 																Margin="9,0,0,0"
-																
-																
+
+
 																Text="{Binding Partner.Status, TargetNullValue=''}"
 																TextTrimming="CharacterEllipsis" />
 															</StackPanel>
@@ -1814,8 +1814,8 @@ mc:Ignorable="d">
 																Source="Assets/Universal/Main/clock.png" />
 																<TextBlock
 																Margin="9,0,0,0"
-																
-																
+
+
 																Text="{Binding Source={x:Static sys:DateTime.Now}, StringFormat={}{0:h:mm tt}}"
 																TextTrimming="CharacterEllipsis" />
 															</StackPanel>
@@ -1858,8 +1858,8 @@ mc:Ignorable="d">
 																		MaxWidth="100"
 																		Margin="5,0,0,1"
 																		VerticalAlignment="Center"
-																		
-																		
+
+
 																		Foreground="{DynamicResource Text.VeryHighContrast}"
 																		Text="{Binding DisplayName}"
 																		TextTrimming="CharacterEllipsis"
@@ -1929,8 +1929,8 @@ mc:Ignorable="d">
 															Orientation="Horizontal">
 																<TextBlock
 																Margin="11,0,0,0"
-																
-																
+
+
 																Text="{Binding Channels.Count, StringFormat='{}Server - {0} channels'}"
 																TextTrimming="CharacterEllipsis" />
 															</StackPanel>
@@ -1977,8 +1977,8 @@ mc:Ignorable="d">
 															Orientation="Horizontal">
 																<TextBlock
 																Margin="11,0,0,0"
-																
-																
+
+
 																Text="Server channel"
 																TextTrimming="CharacterEllipsis" />
 															</StackPanel>
@@ -2110,18 +2110,18 @@ mc:Ignorable="d">
 													<Setter Property="Padding" Value="0" />
 													<Setter Property="Template">
 														<Setter.Value>
-<ControlTemplate TargetType="ListBoxItem">
-    <Border x:Name="ItemBorder"
-            Background="{Binding IsSelected,
-                RelativeSource={RelativeSource TemplatedParent},
-                Converter={StaticResource SelectedToSelectionBrush}}">
-        <ContentPresenter Name="PART_ContentPresenter"
-                          Content="{TemplateBinding Content}"
-                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
-    </Border>
-</ControlTemplate>
+															<ControlTemplate TargetType="ListBoxItem">
+																<Border x:Name="ItemBorder"
+																		Background="{Binding IsSelected,
+																		RelativeSource={RelativeSource TemplatedParent},
+																		Converter={StaticResource SelectedToSelectionBrush}}">
+																	<ContentPresenter Name="PART_ContentPresenter"
+																					  Content="{TemplateBinding Content}"
+																					  ContentTemplate="{TemplateBinding ContentTemplate}"
+																					  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+																					  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+																</Border>
+															</ControlTemplate>
 														</Setter.Value>
 													</Setter>
 												</Style>
@@ -2175,7 +2175,7 @@ mc:Ignorable="d">
 													</StackPanel>
 													<Popup
 													x:Name="EmojiFlyout"
-													
+
 													HorizontalOffset="-20"
 													Placement="Top"
 													PlacementTarget="{Binding ElementName=EmojiButton}"
@@ -2228,21 +2228,21 @@ mc:Ignorable="d">
 												</Grid>
 												<!--  Message box typing area  -->
 												<TextBox
-    x:Name="MessageTextBox"
-    MinHeight="35"
-    MaxHeight="{Binding Bounds.Height, ElementName=MessageWindow, Converter={StaticResource HalfValueConverter}}"
-    Padding="2,3"
-    AcceptsReturn="True"
-    Background="Transparent"
-    BorderThickness="0"
-    
-    
-    GotFocus="MessageTextBox_Focused"
-    LostFocus="MessageTextBox_Unfocused"
-    TextChanged="MessageTextBox_TextChanged"
-    UseLayoutRounding="True"
-    ScrollViewer.VerticalScrollBarVisibility="Auto"
-    TextWrapping="Wrap" />
+												x:Name="MessageTextBox"
+												MinHeight="35"
+												MaxHeight="{Binding Bounds.Height, ElementName=MessageWindow, Converter={StaticResource HalfValueConverter}}"
+												Padding="2,3"
+												AcceptsReturn="True"
+												Background="Transparent"
+												BorderThickness="0"
+
+
+												GotFocus="MessageTextBox_Focused"
+												LostFocus="MessageTextBox_Unfocused"
+												TextChanged="MessageTextBox_TextChanged"
+												UseLayoutRounding="True"
+												ScrollViewer.VerticalScrollBarVisibility="Auto"
+												TextWrapping="Wrap" />
 											</StackPanel>
 											<controls:SliceControl
 											x:Name="SendMsgButton"

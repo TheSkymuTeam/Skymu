@@ -54,7 +54,7 @@ namespace Skymu.Forms
 
             // me
             MoodBox.Text = user?.Status ?? string.Empty;
-            MyAvatar.Source = ToBitmap(user?.Avatar);
+            MyAvatar.Source = Helpers.ImageHelper.GenerateAvatarImageFromArray(user?.Avatar);
 
             // Top contacts. For now, we don't have any priority in Yggdrasil, so it's just most recent.
             foreach (DirectMessage dm in _contacts.Where(c => c?.Partner != null).Take(MaxTopContacts))
@@ -74,7 +74,7 @@ namespace Skymu.Forms
             if (_user != null && username == _user.Username)
             {
                 if (moodText != null) MoodBox.Text = moodText;
-                if (avatar != null) MyAvatar.Source = ToBitmap(avatar);
+                if (avatar != null) MyAvatar.Source = Helpers.ImageHelper.GenerateAvatarImageFromArray(avatar);
             }
             UpdateAvatar(username, avatar);
         }
@@ -83,11 +83,11 @@ namespace Skymu.Forms
         {
             if (avatar == null) return;
             if (_user != null && username == _user.Username)
-                MyAvatar.Source = ToBitmap(avatar);
+                MyAvatar.Source = Helpers.ImageHelper.GenerateAvatarImageFromArray(avatar);
 
             foreach (TopContactItem item in _topContacts)
                 if (item.Source.Partner.Username == username)
-                    item.Avatar = ToBitmap(avatar);
+                    item.Avatar = Helpers.ImageHelper.GenerateAvatarImageFromArray(avatar);
         }
 
         #endregion
@@ -126,19 +126,6 @@ namespace Skymu.Forms
         private void RefreshText(object sender, PropertyChangedEventArgs e) =>
             LearnHeader.Text = $"Learn how to use {Settings.BrandingName}";
 
-        private static Bitmap ToBitmap(byte[] data)
-        {
-            if (data == null || data.Length == 0) return null;
-            try
-            {
-                using (var ms = new MemoryStream(data))
-                    return new Bitmap(ms);
-            }
-            catch
-            {
-                return null;
-            }
-        }
     }
 
     public class TopContactItem : INotifyPropertyChanged

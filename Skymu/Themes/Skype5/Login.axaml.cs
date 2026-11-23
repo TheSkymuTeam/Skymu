@@ -19,7 +19,7 @@ namespace Skymu.Skype5
 {
     public partial class Login : LoginWindowBase
     {
-        public Login(bool switchuser = false) : base(switchuser)
+        public Login() 
         {
             InitializeComponent();
             InitializeLoginWindow(new LoginViewModel(() => new Main()));

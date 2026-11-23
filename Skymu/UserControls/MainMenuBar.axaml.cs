@@ -140,8 +140,8 @@ namespace Skymu.Controls
         }
 
         private void OnAccountManager(object? sender, EventArgs e) => Forms.Pages.AccountManager.Open();
-        private void OnSignOut(object? sender, EventArgs e) => Universal.ActiveViewModel.InitiateSignOut(false);
-        private void OnSwitchUser(object? sender, EventArgs e) => Universal.ActiveViewModel.InitiateSignOut(true);
+        private void OnSignOut(object? sender, EventArgs e) => Universal.ActiveViewModel.InitiateSignOut(true);
+        private void OnSwitchUser(object? sender, EventArgs e) => Forms.Pages.AccountManager.Open();
         private void OnClose(object? sender, EventArgs e) => Universal.Close();
         private async void OnAbout(object? sender, EventArgs e) 
         {

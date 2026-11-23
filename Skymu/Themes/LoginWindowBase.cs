@@ -45,13 +45,12 @@ namespace Skymu.Theming
     {
         private LoginViewModel _viewModel;
         internal bool noCloseEvent;
-        private bool switchuser = false;
 
         protected virtual void OnLoginButtonUpdated(bool enabled) { }
 
-        protected LoginWindowBase(bool switchuser)
+        protected LoginWindowBase()
         {
-            this.switchuser = switchuser;
+
         }
 
         protected void InitializeLoginWindow(LoginViewModel viewModel)
@@ -173,24 +172,12 @@ namespace Skymu.Theming
             foreach (var item in _viewModel.PluginItems)
                 ProtocolComboBox.Items.Add(item);
 
-            if (_viewModel.PendingAutoLogin != null && !switchuser)
+            if (_viewModel.PendingAutoLogin != null)
                 LoginToggleAnimation(true);
             else
                 SelectDefaultProtocol();
 
-            if (switchuser && _viewModel.PendingAutoLogin != null)
-            {
-                var pal = _viewModel.PendingAutoLoginListing;
-                var pa = _viewModel.PendingAutoLogin;
-                _viewModel.ClearPendingAutoLogin();
-                ProtocolComboBox.SelectedItem = pal;
-                ProtocolSelectionChanged(null, null);
-                SetProtocolSelection(pal, pa);
-            }
-
-            // WPF used ContentRendered so plugins were loaded before auto-login; Opened can fire too early in Avalonia.
-            if (!switchuser)
-                await _viewModel.TryAutoLogin();
+            await _viewModel.TryAutoLogin();
             if (_viewModel.PendingAutoLogin != null && ProtocolComboBox.SelectedIndex == -1)
                 SelectDefaultProtocol();
         }

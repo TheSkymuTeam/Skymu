@@ -159,9 +159,9 @@ namespace Skymu.Skype5
             SkypeCreditBox.Text = text;
         }
 
-        protected override void ShowLogin(bool switchuser)
+        protected override void ShowLogin()
         {
-            new Login(switchuser).Show();
+            new Login().Show();
         }
 
         public Main()

@@ -1,163 +1,163 @@
 ﻿<!--
-    ============================================================
-    Copyright © The Skymu Team and other contributors.
-    For any inquiries or concerns, email contact@skymu.app.
-    ============================================================
-    Modification or redistribution of this code is governed
-    by the terms set out in the project license agreement.
-    If you do not comply with those terms, you may not
-    modify or distribute any original code from the project.
-    ============================================================
-    License: https://skymu.app/legal/license
-    SPDX-License-Identifier: AGPL-3.0-or-later
-    ============================================================
+============================================================
+Copyright © The Skymu Team and other contributors.
+For any inquiries or concerns, email contact@skymu.app.
+============================================================
+Modification or redistribution of this code is governed
+by the terms set out in the project license agreement.
+If you do not comply with those terms, you may not
+modify or distribute any original code from the project.
+============================================================
+License: https://skymu.app/legal/license
+SPDX-License-Identifier: AGPL-3.0-or-later
+============================================================
 -->
 <ResourceDictionary
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:converters="clr-namespace:Skymu.Converters"
-    xmlns:global="clr-namespace:Skymu"
-    xmlns:controls="clr-namespace:Skymu.Controls">
-    <converters:IsCurrentUserToVisibilityConverter x:Key="IsCurrentUserToVisibilityConverter" />
-    <converters:AssetLoader x:Key="AssetLoader" />
-    <ContextMenu x:Key="MessageMenu" DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
-        <!--  Copy selected  -->
-        <MenuItem Header="{Binding [sF_CHAT_FORM_IMGRID_PMENUITEM_COPY], Source={StaticResource Lang}}"
-         IsEnabled="False" />
-        <!--  Copy message  -->
-        <MenuItem
-            Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=CopyMessageCommand}"
-            CommandParameter="{Binding}"
-            Header="{Binding [sCHAT_MENU_COPY_MESSAGE], Source={StaticResource Lang}}"/>
-        <!--  Select all  -->
-        <MenuItem Header="{Binding [sF_CHAT_FORM_IMGRID_PMENUITEM_SELALL], Source={StaticResource Lang}}"
-         />
-        <Separator />
-        <!--  Reply  -->
-        <MenuItem
-            Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=ReplyToMessageCommand}"
-            CommandParameter="{Binding}"
-            Header="Reply" />
-        <!--  Edit  -->
-        <MenuItem
-            Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=EditMessageCommand}"
-            CommandParameter="{Binding}"
-            Header="{Binding [sCHAT_EDIT_MESSAGE], Source={StaticResource Lang}}"
-            
-            IsVisible="{Binding Author.Identifier, Converter={StaticResource IsCurrentUserToVisibilityConverter}}" />
-        <!--  Delete  -->
-        <MenuItem
-            Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=DeleteMessageCommand}"
-            CommandParameter="{Binding}"
-            Header="{Binding [sCHAT_MENU_REMOVE_MESSAGE], Source={StaticResource Lang}}"
-           
-            IsVisible="{Binding Author.Identifier, Converter={StaticResource IsCurrentUserToVisibilityConverter}}" />
-        <!--  Move bookmark  -->
-        <MenuItem
-            Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=MoveBookmarkCommand}"
-            CommandParameter="{Binding}"
-            Header="{Binding [sCHAT_MENU_MOVE_BOOKMARK], Source={StaticResource Lang}}"
-            />
-    </ContextMenu>
-    <ContextMenu x:Key="StatusMenu">
-                                                    <MenuItem
-                                                        Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=SetStatusCommand}"
-            CommandParameter="online"
-                                                        Header="{Binding [sSTATUSMENU_CAPTION_ONLINE], Source={StaticResource Lang}}">
-                                                        <MenuItem.Icon>
-                                                            <controls:SliceControl
-                                                                Width="14"
-                                                                DefaultIndex="2"
-                                                                ElementCount="22"
-                                                                HoverIndex="-1"
-                                                                PressedIndex="-1"
-                                                                SliceMode="0"
-                                                                Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Icon/skype-status-small.png'}"
-                                                                StackDirection="Horizontal" />
-                                                        </MenuItem.Icon>
-                                                    </MenuItem>
-                                                    <MenuItem
-                                                        Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=SetStatusCommand}"
-            CommandParameter="away"
-                                                        Header="{Binding [sSTATUSMENU_CAPTION_AWAY], Source={StaticResource Lang}}">
-                                                        <MenuItem.Icon>
-                                                            <controls:SliceControl
-                                                                Width="14"
-                                                                DefaultIndex="3"
-                                                                ElementCount="22"
-                                                                HoverIndex="-1"
-                                                                PressedIndex="-1"
-                                                                SliceMode="0"
-                                                                Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Icon/skype-status-small.png'}"
-                                                                StackDirection="Horizontal" />
-                                                        </MenuItem.Icon>
-                                                    </MenuItem>
-                                                    <MenuItem
-                                                       Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=SetStatusCommand}"
-            CommandParameter="dnd"
-                                                        Header="{Binding [sSTATUSMENU_CAPTION_DND], Source={StaticResource Lang}}">
-                                                        <MenuItem.Icon>
-                                                            <controls:SliceControl
-                                                                Width="14"
-                                                                DefaultIndex="5"
-                                                                ElementCount="22"
-                                                                HoverIndex="-1"
-                                                                PressedIndex="-1"
-                                                                SliceMode="0"
-                                                                Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Icon/skype-status-small.png'}"
-                                                                StackDirection="Horizontal" />
-                                                        </MenuItem.Icon>
-                                                    </MenuItem>
-                                                    <MenuItem
-                                                        Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=SetStatusCommand}"
-            CommandParameter="invisible"
-                                                        Header="{Binding [sSTATUSMENU_CAPTION_INVISIBLE], Source={StaticResource Lang}}">
-                                                        <MenuItem.Icon>
-                                                            <controls:SliceControl
-                                                                Width="14"
-                                                                DefaultIndex="14"
-                                                                ElementCount="22"
-                                                                HoverIndex="-1"
-                                                                PressedIndex="-1"
-                                                                SliceMode="0"
-                                                                Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Icon/skype-status-small.png'}"
-                                                                StackDirection="Horizontal" />
-                                                        </MenuItem.Icon>
-                                                    </MenuItem>
-                                                    <MenuItem
-                                                       Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=SetStatusCommand}"
-            CommandParameter="offline"
-                                                        Header="{Binding [sSTATUSMENU_CAPTION_OFFLINE], Source={StaticResource Lang}}"
-                                                        IsEnabled="False">
-                                                        <MenuItem.Icon>
-                                                            <controls:SliceControl
-                                                                Width="14"
-                                                                DefaultIndex="14"
-                                                                ElementCount="22"
-                                                                HoverIndex="-1"
-                                                                PressedIndex="-1"
-                                                                SliceMode="0"
-                                                                Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Icon/skype-status-small.png'}"
-                                                                StackDirection="Horizontal" />
-                                                        </MenuItem.Icon>
-                                                    </MenuItem>
-                                                    <Separator />
-                                                    <MenuItem
-                                                        Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=SetStatusCommand}"
-            CommandParameter="call_forwarding"
-                                                        Header="{Binding [sSTATUSMENU_CAPTION_CF_OPTIONS2], Source={StaticResource Lang}}">
-                                                        <MenuItem.Icon>
-                                                            <controls:SliceControl
-                                                                Width="14"
-                                                                DefaultIndex="13"
-                                                                ElementCount="22"
-                                                                HoverIndex="-1"
-                                                                PressedIndex="-1"
-                                                                SliceMode="0"
-                                                                Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Icon/skype-status-small.png'}"
-                                                                StackDirection="Horizontal" />
-                                                        </MenuItem.Icon>
-                                                    </MenuItem>
-                                      
-</ContextMenu>
+xmlns="https://github.com/avaloniaui"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+xmlns:converters="clr-namespace:Skymu.Converters"
+xmlns:global="clr-namespace:Skymu"
+xmlns:controls="clr-namespace:Skymu.Controls">
+	<converters:IsCurrentUserToVisibilityConverter x:Key="IsCurrentUserToVisibilityConverter" />
+	<converters:AssetLoader x:Key="AssetLoader" />
+	<ContextMenu x:Key="MessageMenu" DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+		<!--  Copy selected  -->
+		<MenuItem Header="{Binding [sF_CHAT_FORM_IMGRID_PMENUITEM_COPY], Source={StaticResource Lang}}"
+				  IsEnabled="False" />
+		<!--  Copy message  -->
+		<MenuItem
+		Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=CopyMessageCommand}"
+		CommandParameter="{Binding}"
+		Header="{Binding [sCHAT_MENU_COPY_MESSAGE], Source={StaticResource Lang}}"/>
+		<!--  Select all  -->
+		<MenuItem Header="{Binding [sF_CHAT_FORM_IMGRID_PMENUITEM_SELALL], Source={StaticResource Lang}}"
+				  />
+		<Separator />
+		<!--  Reply  -->
+		<MenuItem
+		Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=ReplyToMessageCommand}"
+		CommandParameter="{Binding}"
+		Header="Reply" />
+		<!--  Edit  -->
+		<MenuItem
+		Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=EditMessageCommand}"
+		CommandParameter="{Binding}"
+		Header="{Binding [sCHAT_EDIT_MESSAGE], Source={StaticResource Lang}}"
+
+		IsVisible="{Binding Author.Identifier, Converter={StaticResource IsCurrentUserToVisibilityConverter}}" />
+		<!--  Delete  -->
+		<MenuItem
+		Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=DeleteMessageCommand}"
+		CommandParameter="{Binding}"
+		Header="{Binding [sCHAT_MENU_REMOVE_MESSAGE], Source={StaticResource Lang}}"
+
+		IsVisible="{Binding Author.Identifier, Converter={StaticResource IsCurrentUserToVisibilityConverter}}" />
+		<!--  Move bookmark  -->
+		<MenuItem
+		Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=MoveBookmarkCommand}"
+		CommandParameter="{Binding}"
+		Header="{Binding [sCHAT_MENU_MOVE_BOOKMARK], Source={StaticResource Lang}}"
+		/>
+	</ContextMenu>
+	<ContextMenu x:Key="StatusMenu">
+		<MenuItem
+		Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=SetStatusCommand}"
+		CommandParameter="online"
+		Header="{Binding [sSTATUSMENU_CAPTION_ONLINE], Source={StaticResource Lang}}">
+			<MenuItem.Icon>
+				<controls:SliceControl
+				Width="14"
+				DefaultIndex="2"
+				ElementCount="22"
+				HoverIndex="-1"
+				PressedIndex="-1"
+				SliceMode="0"
+				Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Icon/skype-status-small.png'}"
+				StackDirection="Horizontal" />
+			</MenuItem.Icon>
+		</MenuItem>
+		<MenuItem
+		Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=SetStatusCommand}"
+		CommandParameter="away"
+		Header="{Binding [sSTATUSMENU_CAPTION_AWAY], Source={StaticResource Lang}}">
+			<MenuItem.Icon>
+				<controls:SliceControl
+				Width="14"
+				DefaultIndex="3"
+				ElementCount="22"
+				HoverIndex="-1"
+				PressedIndex="-1"
+				SliceMode="0"
+				Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Icon/skype-status-small.png'}"
+				StackDirection="Horizontal" />
+			</MenuItem.Icon>
+		</MenuItem>
+		<MenuItem
+		Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=SetStatusCommand}"
+		CommandParameter="dnd"
+		Header="{Binding [sSTATUSMENU_CAPTION_DND], Source={StaticResource Lang}}">
+			<MenuItem.Icon>
+				<controls:SliceControl
+				Width="14"
+				DefaultIndex="5"
+				ElementCount="22"
+				HoverIndex="-1"
+				PressedIndex="-1"
+				SliceMode="0"
+				Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Icon/skype-status-small.png'}"
+				StackDirection="Horizontal" />
+			</MenuItem.Icon>
+		</MenuItem>
+		<MenuItem
+		Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=SetStatusCommand}"
+		CommandParameter="invisible"
+		Header="{Binding [sSTATUSMENU_CAPTION_INVISIBLE], Source={StaticResource Lang}}">
+			<MenuItem.Icon>
+				<controls:SliceControl
+				Width="14"
+				DefaultIndex="14"
+				ElementCount="22"
+				HoverIndex="-1"
+				PressedIndex="-1"
+				SliceMode="0"
+				Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Icon/skype-status-small.png'}"
+				StackDirection="Horizontal" />
+			</MenuItem.Icon>
+		</MenuItem>
+		<MenuItem
+		Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=SetStatusCommand}"
+		CommandParameter="offline"
+		Header="{Binding [sSTATUSMENU_CAPTION_OFFLINE], Source={StaticResource Lang}}"
+		IsEnabled="False">
+			<MenuItem.Icon>
+				<controls:SliceControl
+				Width="14"
+				DefaultIndex="14"
+				ElementCount="22"
+				HoverIndex="-1"
+				PressedIndex="-1"
+				SliceMode="0"
+				Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Icon/skype-status-small.png'}"
+				StackDirection="Horizontal" />
+			</MenuItem.Icon>
+		</MenuItem>
+		<Separator />
+		<MenuItem
+		Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=SetStatusCommand}"
+		CommandParameter="call_forwarding"
+		Header="{Binding [sSTATUSMENU_CAPTION_CF_OPTIONS2], Source={StaticResource Lang}}">
+			<MenuItem.Icon>
+				<controls:SliceControl
+				Width="14"
+				DefaultIndex="13"
+				ElementCount="22"
+				HoverIndex="-1"
+				PressedIndex="-1"
+				SliceMode="0"
+				Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Icon/skype-status-small.png'}"
+				StackDirection="Horizontal" />
+			</MenuItem.Icon>
+		</MenuItem>
+
+	</ContextMenu>
 </ResourceDictionary>
