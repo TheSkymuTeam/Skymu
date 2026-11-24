@@ -74,7 +74,7 @@ namespace OmegaAOL.Bifrost.Http
             bool isHttps = uri.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase);
             int port = uri.Port > 0 ? uri.Port : (isHttps ? 443 : 80);
             string host = uri.Host;
-            string poolKey = string.Format("{0}:{1}", host, port);
+            string poolKey = string.Format("{0}://{1}:{2}", uri.Scheme, host, port);
 
             Stream stream = TryRentFromPool(poolKey)
                 ?? await BifrostTLS.OpenAsync(host, port, isHttps, ct).ConfigureAwait(false);
@@ -185,19 +185,45 @@ namespace OmegaAOL.Bifrost.Http
                 {
                     stream.Dispose();
 
-                    var redirectUri = location.StartsWith("http", StringComparison.OrdinalIgnoreCase)
-                        ? new Uri(location)
-                        : new Uri(uri, location);
+                    var redirectUri = new Uri(uri, location);
 
-                    var redirectRequest = new HttpRequestMessage(
-                        statusCode == 307 || statusCode == 308 ? request.Method : HttpMethod.Get,
-                        redirectUri
-                    );
+                    if (!redirectUri.Scheme.Equals("http", StringComparison.OrdinalIgnoreCase) && !redirectUri.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase)) 
+                    {
+                    	throw new HttpRequestException("Redirect to an unsupported URI scheme.");
+                    }
+
+                    if (uri.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase) && !redirectUri.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase)) 
+                    {
+                    	throw new HttpRequestException("HTTPS to HTTP redirect blocked.");
+                    }
+
+                    bool sameOrigin = uri.Scheme.Equals(redirectUri.Scheme, StringComparison.OrdinalIgnoreCase)
+                        && uri.Host.Equals(redirectUri.Host, StringComparison.OrdinalIgnoreCase)
+                        && uri.Port == redirectUri.Port;
+
+                    bool preserveMethod = statusCode == 307 || statusCode == 308;                    
+                    if (!sameOrigin && preserveMethod && request.Content != null) 
+                    {
+                    	throw new HttpRequestException("Cross-origin redirect with request content blocked.");
+                    }
+
+                    var redirectRequest = new HttpRequestMessage(preserveMethod ? request.Method : HttpMethod.Get, redirectUri);
 
                     foreach (var h in request.Headers)
-                        redirectRequest.Headers.TryAddWithoutValidation(h.Key, h.Value);
+                    {
+                        if (!sameOrigin
+                            && !h.Key.Equals("Accept", StringComparison.OrdinalIgnoreCase)
+                            && !h.Key.Equals("Accept-Encoding", StringComparison.OrdinalIgnoreCase)
+                            && !h.Key.Equals("Accept-Language", StringComparison.OrdinalIgnoreCase)
+                            && !h.Key.Equals("User-Agent", StringComparison.OrdinalIgnoreCase)) 
+                        {
+                        	continue;
+                        }
 
-                    if (statusCode == 307 || statusCode == 308)
+                        redirectRequest.Headers.TryAddWithoutValidation(h.Key, h.Value);
+                    }
+
+                    if (preserveMethod)
                         redirectRequest.Content = request.Content;
 
                     return await SendInternalAsync(redirectRequest, ct, redirectDepth + 1).ConfigureAwait(false);
