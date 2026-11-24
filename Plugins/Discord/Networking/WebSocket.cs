@@ -140,7 +140,7 @@ namespace Discord.Networking
                         referring_domain = config.DCReferringDomain,
                         referrer_current = config.DCReferringCurrent,
                         referring_domain_current = config.DCReferringCurrentDomain,
-                        release_channel = config.DCClientState,
+                        release_channel = config.DCReleaseChannel,
                         client_event_source = config.DCClientEvtSrc,
                         client_launch_id = config.ClientLaunchId,
                         is_fast_connect = true
