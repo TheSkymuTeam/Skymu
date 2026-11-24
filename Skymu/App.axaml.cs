@@ -291,7 +291,8 @@ namespace Skymu
                     {
                         Tray.DisposeIcon();
                         PluginManager.DisposeAll();
-                        _ = UserServerAPI.StopPolling();
+                        if (!Settings.DisableSWS)
+                            _ = UserServerAPI.StopPolling();
                     }
                     catch { } // If it doesn't work, too bad.
                     if (SignedIn)

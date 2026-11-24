@@ -894,7 +894,8 @@ namespace Skymu.ViewModels
             SoundManager.Play("LOGOUT");
             Universal.SignedIn = false;
             SignOutRequested?.Invoke(this, new EventArgs());
-            _ = UserServerAPI.StopPolling();
+            if (!Settings.DisableSWS)
+                _ = UserServerAPI.StopPolling();
         }
         #endregion
 
@@ -905,12 +906,16 @@ namespace Skymu.ViewModels
             if (Settings.DisableSWS)
                 return;
             await UserServerAPI.GenerateUID();
+            if (Settings.DisableSWS)
+                return;
             await UserServerAPI.SetUserStatus(
                 true,
                 Universal.CurrentUser?.DisplayName,
                 Universal.CurrentUser?.Username,
                 Universal.CurrentUser?.Identifier
             );
+            if (Settings.DisableSWS)
+                return;
             await UserServerAPI.StartPolling();
             _ = PingLoop();
 
@@ -928,9 +933,11 @@ namespace Skymu.ViewModels
 
         private static async Task PingLoop()
         {
-            while (true)
+            while (!Settings.DisableSWS)
             {
                 await Task.Delay(45000);
+                if (Settings.DisableSWS)
+                    return;
                 await UserServerAPI.PingServer();
             }
         }

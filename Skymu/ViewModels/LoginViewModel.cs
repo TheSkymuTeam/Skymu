@@ -295,7 +295,8 @@ namespace Skymu.ViewModels
             Universal.SignedIn = true;
             mainWindow.Show();
             SoundManager.Play("LOGIN");
-            new Updater();
+            if (!Settings.DisableSWS)
+                new Updater();
 
             // warn the user once if they're running an old version of Windows (TODO WARNINGS FOR MAC/LINUX)
             if (!Settings.OldPlatformWarningShown && Universal.Platform.OS == OS.Windows)
