@@ -1,8 +1,6 @@
 ![Skymu Logo](Images/logo.png) 
 
 ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/TheSkymuTeam/Skymu/total)
-![GitHub contributors](https://img.shields.io/github/contributors-anon/TheSkymuTeam/Skymu)
-![GitHub Created At](https://img.shields.io/github/created-at/TheSkymuTeam/Skymu)
 ![GitHub watchers](https://img.shields.io/github/watchers/TheSkymuTeam/Skymu)
 ![GitHub repo stars](https://img.shields.io/github/stars/TheSkymuTeam/Skymu)
 
