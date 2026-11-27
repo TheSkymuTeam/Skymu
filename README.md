@@ -5,7 +5,7 @@
 ![GitHub repo stars](https://img.shields.io/github/stars/TheSkymuTeam/Skymu)
 
 # What is Skymu?
-Skymu is a modern multi-platform IM client that looks like classic versions of Skype, with themes that accurately resemble Skype 4, 5, 6, and 7. Officially supported messaging services include Discord, Matrix, Tox, Chat Completions, and some other platforms. These are shipped with Skymu as plugins using Yggdrasil, a messaging protocol API conceptually similar to libpurple, just better.
+Skymu is a modern multi-platform IM client that looks like classic versions of Skype, with themes that accurately resemble Skype 4, 5, 6, and 7. Officially supported messaging services include Discord, Matrix, Tox, Chat Completions, and some other platforms. These are shipped with Skymu as plugins using Yggdrasil, a messaging protocol API conceptually similar to things like libpurple, just better.
 
 The client uses C# for its backend with some compiled native dependencies such as SQLite. Plugins such as Discord also include native dependencies like the DAVE library. Avalonia is used for the frontend (a mixture of mostly WPF and several native Win32 widgets were used formerly) so that Skymu can run on Windows, macOS and Linux natively without WINE.
 
