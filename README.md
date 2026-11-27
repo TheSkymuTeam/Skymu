@@ -59,7 +59,7 @@ Navigate to the `NSIS` folder, right-click on `SkymuSetup-AnyCPU-Release.nsi`, a
 
 <img width="571" height="212" alt="image" src="https://github.com/user-attachments/assets/0f0b15d9-c73f-4f8a-a3c5-052c1408d4af" />
 
-The NSIS compiler will run. After it's finished, the output log will turn green and `Skymu Installer.exe` will show up in the folder; click "Test Installer" to run it.
+The NSIS compiler will run. After it's finished, the output log will turn green and `Skymu.Installer.AnyCPU.Release.exe` will show up in the folder; click "Test Installer" to run it.
 
 <img width="636" height="540" alt="image" src="https://github.com/user-attachments/assets/07ef2931-fb03-4df7-acbe-c854999221fd" />
 
