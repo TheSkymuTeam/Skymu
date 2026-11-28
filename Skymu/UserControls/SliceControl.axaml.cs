@@ -31,21 +31,10 @@ using Avalonia.Threading;
 
 namespace Skymu.Controls
 {
-	public enum SpriteStackDirection
-	{
-		Vertical,
-		Horizontal,
-	}
+    public enum SpriteStackDirection { Vertical, Horizontal }
+    public enum ButtonVisualState { Default, Hover, Pressed, Disabled }
 
-	public enum ButtonVisualState
-	{
-		Default,
-		Hover,
-		Pressed,
-		Disabled,
-	}
-
-	public partial class SliceControl : UserControl
+    public partial class SliceControl : UserControl
 	{
 		#region Constructor
 		private IBrush _background;

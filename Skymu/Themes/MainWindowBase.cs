@@ -1,3 +1,5 @@
+
+
 /*==========================================================*/
 // Copyright © The Skymu Team and other contributors.
 // For any inquiries or concerns, email contact@skymu.app.
@@ -26,11 +28,11 @@ using Avalonia.Styling;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Skymu.AvaloniaTools;
+using Skymu.Controls;
 using Skymu.Converters;
 using Skymu.Crossplatform;
 using Skymu.Emoticons;
 using Skymu.Enumerations;
-using Skymu.Controls;
 using Skymu.Formatting;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
@@ -44,6 +46,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -104,9 +107,6 @@ namespace Skymu.Theming
         protected global::Avalonia.Controls.TextBox SearchBox => Part<global::Avalonia.Controls.TextBox>(nameof(SearchBox));
         protected global::Avalonia.Controls.Image Spinner => Part<global::Avalonia.Controls.Image>(nameof(Spinner));
         protected private global::Avalonia.Controls.TextBlock TitleMain => Part<global::Avalonia.Controls.TextBlock>(nameof(TitleMain));
-        protected global::Avalonia.Controls.TextBlock TitleShadow => Part<global::Avalonia.Controls.TextBlock>(nameof(TitleShadow));
-        protected global::Avalonia.Controls.TextBlock TitleShadow2 => Part<global::Avalonia.Controls.TextBlock>(nameof(TitleShadow2));
-        protected global::Avalonia.Controls.TextBlock TitleShadow3 => Part<global::Avalonia.Controls.TextBlock>(nameof(TitleShadow3));
         protected global::Avalonia.Controls.TextBlock TypingIndicatorText => Part<global::Avalonia.Controls.TextBlock>(nameof(TypingIndicatorText));
         protected global::Avalonia.Controls.Control ProfileGrid => Part<global::Avalonia.Controls.Control>(nameof(ProfileGrid));
         protected Image TitleBarIcon => Part<Image>(nameof(TitleBarIcon));
@@ -301,60 +301,25 @@ namespace Skymu.Theming
 
         public void InitializeWindowFrame()
         {
-            if (_currentFrame != Enumerations.WindowChrome.Native) // using Skymu's custom border
+            if (_currentFrame == WindowChrome.SkypeXP || _currentFrame == WindowChrome.Acrylic) // using Skymu's custom border
             {
-                if (!Universal.Platform.DwmIsCompositionEnabled && _currentFrame == WindowChrome.SkypeAero) _currentFrame = WindowChrome.Native; // if no DWM, don't use broken Aero frame
-
                 // avalonia extend the window frame into the client area
                 ExtendClientAreaToDecorationsHint = true;
-
                 TitleBar.PointerPressed += TitleBar_PointerPressed;
                 SetClickable(TitleBarIcon, close, minimize, maximize, split);
                 TitleMain.IsVisible = true;
-                if (
-                    _currentFrame == Enumerations.WindowChrome.SkypeAero
-                    || _currentFrame == Enumerations.WindowChrome.Acrylic
-                ) // switch configuration from Skype Basic to Aero
+                if (_currentFrame == Enumerations.WindowChrome.Acrylic) // switch configuration from SkypeXP to Acrylic
                 {
+                    // to have transparency
                     TitleBar.Background = Brushes.Transparent;
-                    if (_currentFrame == Enumerations.WindowChrome.SkypeAero)
-                    {
-                        SystemDecorations = SystemDecorations.Full;   // real WS_CAPTION / WS_THICKFRAME, like the sample
-                        ExtendClientAreaToDecorationsHint = true;     // Avalonia handles WM_NCCALCSIZE + DwmExtendFrameIntoClientArea
-                        ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.PreferSystemChrome; // DWM draws min/max/close
-                        ExtendClientAreaTitleBarHeightHint = -1;
-                        Part<StackPanel>("CaptionButtons").IsVisible = false; // hide your image buttons; DWM draws them now
-                        this.BorderThickness = new Thickness(0, 30, 0, 0);
-                        this.Background = Brushes.Transparent;
-                    }
-                    else if (_currentFrame == Enumerations.WindowChrome.Acrylic)
-                    {
-                        // Ask for acrylic, falling back to plain blur, then plain transparency.
-                        TransparencyLevelHint = new[] { WindowTransparencyLevel.AcrylicBlur };
-                        // Tint painted over the acrylic. The alpha (0x00-0xFF) controls how much blur shows through.
-                        this.Background = new SolidColorBrush(Color.FromArgb(0x60, 0x74, 0xA3, 0xD2));
-                    }
+                    TransparencyLevelHint = new[] { WindowTransparencyLevel.AcrylicBlur };
+                    // acrylic tint
+                    this.Background = new SolidColorBrush(Color.FromArgb(0x60, 0x74, 0xA3, 0xD2));
                     // Titlebar font styling
                     TitleMain.FontFamily = new FontFamily(AeroTitleFont);
                     TitleMain.FontWeight = FontWeight.Normal;
                     TitleMain.FontSize = 12;
-                    TitleMain.Foreground = Brushes.Black;
-
-                    // Titlebar drop shadow (Imitates the Aero glow effect)
-                    TitleMain.Effect = new DropShadowEffect
-                    {
-                        OffsetX = 0,
-                        OffsetY = 0,
-                        Color = Colors.White,
-                        Opacity = 1,
-                        BlurRadius = 20,
-                    };
-
-                    ControlTheme aeroStyle = (ControlTheme)this.FindResource("TitlebarTextStyleAero");
-                    TitleMain.Theme = aeroStyle;
-                    TitleShadow.Theme = aeroStyle;
-                    TitleShadow2.Theme = aeroStyle;
-                    TitleShadow3.Theme = aeroStyle;
+                    TitleMain.Foreground = Brushes.White;
                     TitleBarIcon.Margin = new Thickness(8, 5, 0, 0);
                 }
 
@@ -368,13 +333,20 @@ namespace Skymu.Theming
                 minimize.Source = GenerateTitlebarButtonImage("minimize", _currentFrame);
                 split.Source = img_split;
             }
-            else // using system native border
+
+            else // NOT using the custom border
             {
                 SystemDecorations = SystemDecorations.Full;
                 TitleBar.IsVisible = false;
                 WindowArea.Margin = new Thickness(0);
+                if (_currentFrame == WindowChrome.SkypeAero) // oh my aeros
+                {
+                    new SkypeAeroFrame(this).Apply();
+                }
             }
         }
+        
+
 
 
         private DropShadowEffect CreateDropShadow(string color)
@@ -439,7 +411,7 @@ namespace Skymu.Theming
 
         private void HandleWindowButtonEnter(SliceControl button)
         {
-            if (button != null && _currentFrame != Enumerations.WindowChrome.SkypeXP)
+            if (button != null && _currentFrame != WindowChrome.SkypeXP)
             {
                 if (button.Name == "close")
                 {
@@ -599,8 +571,8 @@ namespace Skymu.Theming
             SelectedContact = dm;
             ConversationList.SelectedItem = ConversationList.Items
                 .OfType<DirectMessage>()
-                .FirstOrDefault(c => c.Identifier == dm.Identifier);   
-            HandleConversationSelection(dm);                         
+                .FirstOrDefault(c => c.Identifier == dm.Identifier);
+            HandleConversationSelection(dm);
         }
 
         #endregion
@@ -1253,14 +1225,14 @@ namespace Skymu.Theming
         protected override void OnClosed(EventArgs e)
         {
             SavePositioning(this, SidebarColumn);
-  
+
         }
 
         protected void OnClose(object sender, RoutedEventArgs e)
         {
             Universal.Close();
         }
-        
+
         protected void OnContacts(object sender, RoutedEventArgs e)
         {
             _ = SelectTab(btnContacts);
@@ -1932,7 +1904,7 @@ namespace Skymu.Theming
                 return;
             var border = sender as Border;
             if (!(border?.Child is SliceControl sliceControlInside)) return;
-            
+
             EmojiFlyout.IsOpen = false;
             RemovePlaceholder(MessageTextBox);
 

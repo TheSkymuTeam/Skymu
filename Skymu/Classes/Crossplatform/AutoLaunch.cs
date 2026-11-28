@@ -27,22 +27,22 @@ namespace Skymu.Crossplatform
 
         internal static bool Get()
         {
-            if (Universal.Platform.OS == OS.Windows)
+            if (OperatingSystem.IsWindows())
                 return GetWindows();
-            if (Universal.Platform.OS == OS.MacOS)
+            if (OperatingSystem.IsMacOS())
                 return GetMac();
-            if (Universal.Platform.OS == OS.Linux || Universal.Platform.OS == OS.FreeBSD)
+            if (OperatingSystem.IsLinux() || OperatingSystem.IsFreeBSD())
                 return GetXdg();
             return false;
         }
 
         internal static void Set(bool yes)
         {
-            if (Universal.Platform.OS == OS.Windows)
+            if (OperatingSystem.IsWindows())
                 SetWindows(yes);
-            else if (Universal.Platform.OS == OS.MacOS)
+            else if (OperatingSystem.IsMacOS())
                 SetMac(yes);
-            else if (Universal.Platform.OS == OS.Linux || Universal.Platform.OS == OS.FreeBSD)
+            else if (OperatingSystem.IsLinux() || OperatingSystem.IsFreeBSD())
                 SetXdg(yes);
         }
 

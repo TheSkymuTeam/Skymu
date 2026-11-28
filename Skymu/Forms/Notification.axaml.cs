@@ -53,7 +53,6 @@ namespace Skymu.Forms
                 return;
 
             // jim: self explanatory, if its on dnd PLEASE do not send notifications.
-
             if (Universal.CurrentUser?.ConnectionStatus == PresenceStatus.DoNotDisturb)
             {
                 Debug.WriteLine("Notification: user is in Do Not Disturb mode, suppress");

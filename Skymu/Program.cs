@@ -20,10 +20,6 @@ namespace Skymu
                 {
                     MaxGpuResourceSizeBytes = 128L * 1024 * 1024 * 4
                 })
-                .With(new Win32PlatformOptions
-                {
-                    CompositionMode = new[] { Win32CompositionMode.RedirectionSurface }
-                })
                 //.AfterSetup(_ => GdiAdvancePatch.Install(new Harmony("skymu.gdi.advances")))
                 .LogToTrace();
     }

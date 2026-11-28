@@ -104,16 +104,6 @@ mc:Ignorable="d">
 			<Setter Property="FontWeight" Value="Bold" />
 			<Setter Property="Text" Value="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}" />
 		</ControlTheme>
-		<ControlTheme
-		x:Key="TitlebarTextStyleAero"
-		BasedOn="{StaticResource TitlebarTextStyle}"
-		TargetType="TextBlock">
-			<Setter Property="Margin" Value="0,4,0,0" />
-			<Setter Property="IsVisible" Value="True" />
-			<Setter Property="FontFamily" Value="Segoe UI" />
-			<Setter Property="FontSize" Value="12" />
-			<Setter Property="FontWeight" Value="Normal" />
-		</ControlTheme>
 		<ControlTheme x:Key="LongIconStyle" TargetType="Image">
 			<Setter Property="HorizontalAlignment" Value="Left" />
 			<Setter Property="VerticalAlignment" Value="Center" />			<Setter Property="Height" Value="16" />
@@ -911,30 +901,6 @@ mc:Ignorable="d">
 				Source="Assets/Universal/Branding/logo-window-frame.png"
 				Theme="{StaticResource LongIconStyle}" />
 				<Grid Margin="6,0">
-					<TextBlock
-					x:Name="TitleShadow"
-					Foreground="White"
-					Theme="{StaticResource TitlebarTextStyle}">
-						<TextBlock.Effect>
-							<BlurEffect  Radius="15.0" />
-						</TextBlock.Effect>
-					</TextBlock>
-					<TextBlock
-					x:Name="TitleShadow2"
-					Foreground="White"
-					Theme="{StaticResource TitlebarTextStyle}">
-						<TextBlock.Effect>
-							<BlurEffect  Radius="20.0" />
-						</TextBlock.Effect>
-					</TextBlock>
-					<TextBlock
-					x:Name="TitleShadow3"
-					Foreground="White"
-					Theme="{StaticResource TitlebarTextStyle}">
-						<TextBlock.Effect>
-							<BlurEffect  Radius="17.0" />
-						</TextBlock.Effect>
-					</TextBlock>
 					<TextBlock
 					x:Name="TitleMain"
 					Foreground="{DynamicResource Text.HighContrast}"

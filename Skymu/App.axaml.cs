@@ -26,7 +26,7 @@ using Classic.Avalonia.Theme;
 using Skymu.AvaloniaTools;
 using Skymu.Crossplatform;
 using Skymu.Forms;
-using Skymu.Forms.Pages;
+using Skymu.Forms.Pages;    
 using Skymu.Helpers;
 using Skymu.Migration;
 using Skymu.Plugins;
@@ -689,10 +689,8 @@ namespace Skymu
                 }
             }
             else if (themeName.Contains("Classic")) theme = new ClassicTheme();
-            else if (themeName.Contains("Native") && Platform.OS == OS.Windows) theme = NativeTheme.Generate(); // TODO crossplatform Native theme?
+            else if (themeName.Contains("Native") && OperatingSystem.IsWindows()) theme = NativeTheme.Generate(); // TODO crossplatform Native theme?
             else theme = new SimpleTheme();
-
-            
 
             try
             {

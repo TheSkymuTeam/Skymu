@@ -23,11 +23,11 @@ using System.Runtime.InteropServices;
 namespace Skymu.Helpers
 {
     class ImageHelper
-
     {
         private static readonly Dictionary<string, Bitmap> _cache = new Dictionary<string, Bitmap>();
         public static Bitmap Load(string path)
         {
+            if (path.StartsWith("/")) path = path.Substring(1);
             return LoadFromPackUri($"avares://Skymu/Themes/{Universal.Theme}/Assets/{path}");
         }
 

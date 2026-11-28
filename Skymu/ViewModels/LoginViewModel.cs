@@ -298,7 +298,7 @@ namespace Skymu.ViewModels
             new Updater();
 
             // warn the user once if they're running an old version of Windows (TODO WARNINGS FOR MAC/LINUX)
-            if (!Settings.OldPlatformWarningShown && Universal.Platform.OS == OS.Windows)
+            if (!Settings.OldPlatformWarningShown && OperatingSystem.IsWindows())
             {
                 string message = null;
 
@@ -314,7 +314,7 @@ namespace Skymu.ViewModels
                     Universal.ShowMessage(message, "Compatibility warning");
             }
 
-            if (!Settings.ShowOldDotNetWarnings && Universal.Platform.OS == OS.Windows) // other platforms bundle the .NET runtime
+            if (!Settings.ShowOldDotNetWarnings && OperatingSystem.IsWindows()) // other platforms bundle the .NET runtime
             {
                 string newNetLink = string.Empty;
                 int netVersion = Universal.Platform.NetVersion;

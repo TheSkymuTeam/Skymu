@@ -33,12 +33,12 @@ namespace Skymu.Crossplatform
 
             try
             {
-                if (Universal.Platform.OS == OS.Windows)
+                if (OperatingSystem.IsWindows())
                     FlashWindows(handle.Handle);
-                else if (Universal.Platform.OS == OS.MacOS)
+                else if (OperatingSystem.IsMacOS())
                     Dispatcher.UIThread.Post(BounceDock);
                 else if (
-                    (Universal.Platform.OS == OS.Linux || Universal.Platform.OS == OS.FreeBSD)
+                    (OperatingSystem.IsLinux() || OperatingSystem.IsFreeBSD())
                 )
                     FlashX11(handle);
             }

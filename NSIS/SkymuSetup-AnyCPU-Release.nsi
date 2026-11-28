@@ -53,7 +53,7 @@ Function .onInit
 FunctionEnd
 
 Name "${PRODUCT_NAME}"
-OutFile ".\Skymu.Installer.x64.exe"
+OutFile ".\Skymu.Installer.AnyCPU.Release.exe"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
 ShowUnInstDetails show

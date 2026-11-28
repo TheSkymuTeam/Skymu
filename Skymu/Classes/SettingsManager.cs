@@ -179,7 +179,7 @@ namespace Skymu.Preferences
 
         public static WindowChrome WindowChrome
         {
-            get => SELECT("WindowChrome", WindowChrome.Native, "Skymu/Appearance"); 
+            get => SELECT("WindowChrome", WindowChrome.SkypeAero, "Skymu/Appearance"); 
             set 
             {
                 // I tried
