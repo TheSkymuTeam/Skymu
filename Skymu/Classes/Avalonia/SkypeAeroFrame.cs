@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 namespace Skymu.AvaloniaTools
 {
     internal class SkypeAeroFrame // oh my aeros, turn a normal frame into sigma frutiger smexy mode
-    {                             // TODO this is really a bad way of doing it, hook into the standard window to customize the frame instead of spawning another
+    {
         private readonly Window _window;
 
         public SkypeAeroFrame(Window window)
@@ -66,13 +66,33 @@ namespace Skymu.AvaloniaTools
         [DllImport("gdi32.dll", CharSet = CharSet.Unicode)] private static extern IntPtr CreateFontIndirectW(ref LOGFONT lf);
 
         [DllImport("user32.dll")] private static extern IntPtr SendMessage(IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam);
+        [DllImport("user32.dll")] private static extern bool PostMessage(IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam);
         [DllImport("user32.dll")] private static extern bool DestroyIcon(IntPtr hIcon);
+        [DllImport("user32.dll")] private static extern int GetWindowLong(IntPtr hwnd, int index);
+        [DllImport("user32.dll")] private static extern int SetWindowLong(IntPtr hwnd, int index, int value);
+        [DllImport("user32.dll")] private static extern bool TrackMouseEvent(ref TRACKMOUSEEVENT tme);
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelMouseProc lpfn, IntPtr hMod, uint dwThreadId);
+        [DllImport("user32.dll")] private static extern bool UnhookWindowsHookEx(IntPtr hhk);
+        [DllImport("user32.dll")] private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode)] private static extern IntPtr GetModuleHandle(string lpModuleName);
 
-        private const uint WM_SETICON = 0x80;
+        private const uint WM_SETICON = 0x80, WM_SYSCOMMAND = 0x112;
+        private const uint WM_NCMOUSEMOVE = 0x2A, WM_NCLBUTTONDOWN = 0xA1, WM_NCLBUTTONUP = 0xA2, WM_NCMOUSELEAVE = 0x2E2;
+        private const uint WM_MOUSEMOVE = 0x200, WM_LBUTTONDOWN = 0x201, WM_LBUTTONUP = 0x202;
+        private const int WH_MOUSE_LL = 14;
+        private const uint TME_LEAVE = 2, TME_NONCLIENT = 0x10;
+        private const int GWL_STYLE = -16, WS_SYSMENU = 0x00080000;
+        private const int HTNOWHERE = 0, HTMINBUTTON = 8, HTMAXBUTTON = 9, HTCLOSE = 20;
+        private const int HTCAPTIONBUTTON_BASE = 130;
+        private const int SC_MINIMIZE = 0xF020, SC_MAXIMIZE = 0xF030, SC_CLOSE = 0xF060, SC_RESTORE = 0xF120;
         private IntPtr _blankIcon;
 
         [StructLayout(LayoutKind.Sequential)] private struct WTA_OPTIONS { public uint Flags, Mask; }
         [StructLayout(LayoutKind.Sequential)] private struct RECT { public int Left, Top, Right, Bottom; }
+        [StructLayout(LayoutKind.Sequential)] private struct TRACKMOUSEEVENT { public int cbSize; public uint dwFlags; public IntPtr hwndTrack; public uint dwHoverTime; }
+        [StructLayout(LayoutKind.Sequential)] private struct MSLLHOOKSTRUCT { public NativePoint pt; public uint mouseData, flags, time; public IntPtr dwExtraInfo; }
+        private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
         [StructLayout(LayoutKind.Sequential)] private struct NativePoint { public int X, Y; }
         [StructLayout(LayoutKind.Sequential)] private struct NativeSize { public int W, H; }
         [StructLayout(LayoutKind.Sequential)] private struct BLENDFUNCTION { public byte BlendOp, BlendFlags, SourceConstantAlpha, AlphaFormat; }
@@ -99,19 +119,23 @@ namespace Skymu.AvaloniaTools
         }
 
         private const int WTA_NONCLIENT = 1;
-        private const uint WTNCA_NODRAWCAPTION = 1, WTNCA_NODRAWICON = 2;
+        private const uint WTNCA_NODRAWCAPTION = 1, WTNCA_NODRAWICON = 2, WTNCA_NOSYSMENU = 4;
         private const int SM_CYCAPTION = 4, SM_CXFRAME = 32, SM_CYSIZEFRAME = 33, SM_CXPADDEDBORDER = 92;
         private const int DWMWA_EXTENDED_FRAME_BOUNDS = 9, DWMWA_CAPTION_BUTTON_BOUNDS = 5, TMT_CAPTIONFONT = 801;
         private const uint WM_SIZE = 0x05, WM_SHOWWINDOW = 0x18, WM_SETTEXT = 0x0C, WM_WINDOWPOSCHANGED = 0x47,
             WM_NCHITTEST = 0x84, WM_NCACTIVATE = 0x86, WM_THEMECHANGED = 0x31A, WM_DWMCOMPOSITIONCHANGED = 0x31E, WM_DPICHANGED = 0x2E0;
-        private const uint SWP_NOSIZE = 1, SWP_NOZORDER = 4, SWP_NOACTIVATE = 0x10;
+        private const uint SWP_NOSIZE = 1, SWP_NOMOVE = 2, SWP_NOZORDER = 4, SWP_NOACTIVATE = 0x10, SWP_FRAMECHANGED = 0x20;
         private const uint DTT_TEXTCOLOR = 1, DTT_GLOWSIZE = 0x800, DTT_COMPOSITED = 0x2000;
-        private const uint DT_FLAGS = 0x0 /*LEFT*/ | 0x4 /*VCENTER*/ | 0x20 /*SINGLELINE*/ | 0x40000 /*WORD_ELLIPSIS*/;
+        private const uint DT_FLAGS = 0x0 | 0x4 | 0x20 | 0x40000;
         private const int HTSYSMENU = 3;
 
         private System.Drawing.Bitmap _frameLogo;
+        private System.Drawing.Bitmap _btnSplit, _btnMinimize, _btnMaximize, _btnRestore, _btnClose;
         private IntPtr _aeroHwnd, _aeroOverlay;
-        private bool _aeroActive = true, _aeroRefreshPending;
+        private bool _aeroActive = true, _aeroRefreshPending, _trackingCaptionButtons;
+        private int _captionButtonHover = -1, _captionButtonDown = -1;
+        private LowLevelMouseProc _mouseHookProc;
+        private IntPtr _mouseHook;
 
         #endregion
 
@@ -128,11 +152,25 @@ namespace Skymu.AvaloniaTools
                 var uri = new Uri($"avares://Skymu/Themes/{Universal.Theme}/Assets/Universal/Branding/logo-window-frame.png");
                 using (var s = Avalonia.Platform.AssetLoader.Open(uri)) _frameLogo = new System.Drawing.Bitmap(s);
 
-                Win32Properties.AddWndProcHookCallback(_window, FrameHook);  
+                _btnSplit    = LoadAeroButtonSheet("split");
+                _btnMinimize = LoadAeroButtonSheet("minimize");
+                _btnMaximize = LoadAeroButtonSheet("maximize");
+                _btnRestore  = LoadAeroButtonSheet("restore");
+                _btnClose    = LoadAeroButtonSheet("close");
+
+                Win32Properties.AddWindowStylesCallback(_window, WindowStylesCallback);
+                Win32Properties.AddWndProcHookCallback(_window, FrameHook);
+
+                _mouseHookProc = MouseHookProc;
+                _mouseHook = SetWindowsHookEx(WH_MOUSE_LL, _mouseHookProc, GetModuleHandle(null), 0);
                 _window.Opened += OnAeroOpened;
+                _window.Closed += OnAeroClosed;
             }
             catch (Exception ex) { Debug.WriteLine($"[Skymu] SkypeAero: setup failed ({ex.Message})."); }
         }
+
+        private static (uint style, uint exStyle) WindowStylesCallback(uint style, uint exStyle) =>
+            (style & ~(uint)WS_SYSMENU, exStyle);
 
         private void HideNativeIcon()
         {
@@ -141,8 +179,63 @@ namespace Skymu.AvaloniaTools
                 using (var bmp = new System.Drawing.Bitmap(32, 32, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
                     _blankIcon = bmp.GetHicon();  
             }
-            SendMessage(_aeroHwnd, WM_SETICON, (IntPtr)0 /*ICON_SMALL*/, _blankIcon);
-            SendMessage(_aeroHwnd, WM_SETICON, (IntPtr)1 /*ICON_BIG*/, _blankIcon);
+            SendMessage(_aeroHwnd, WM_SETICON, (IntPtr)0, _blankIcon);
+            SendMessage(_aeroHwnd, WM_SETICON, (IntPtr)1, _blankIcon);
+        }
+
+        private static System.Drawing.Bitmap LoadAeroButtonSheet(string name)
+        {
+            var uri = new Uri($"avares://Skymu/Themes/{Universal.Theme}/Assets/Universal/Window Frame/Aero/{name}/combined.png");
+            using (var s = Avalonia.Platform.AssetLoader.Open(uri))
+                return new System.Drawing.Bitmap(s);
+        }
+
+        private static void HideNativeCaptionButtons(IntPtr hwnd)
+        {
+            if (hwnd == IntPtr.Zero) return;
+
+            int style = GetWindowLong(hwnd, GWL_STYLE);
+            if ((style & WS_SYSMENU) != 0)
+            {
+                SetWindowLong(hwnd, GWL_STYLE, style & ~WS_SYSMENU);
+                SetWindowPos(hwnd, IntPtr.Zero, 0, 0, 0, 0,
+                    SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+            }
+
+            var opts = new WTA_OPTIONS
+            {
+                Flags = WTNCA_NODRAWCAPTION | WTNCA_NODRAWICON | WTNCA_NOSYSMENU,
+                Mask = WTNCA_NODRAWCAPTION | WTNCA_NODRAWICON | WTNCA_NOSYSMENU
+            };
+            SetWindowThemeAttribute(hwnd, WTA_NONCLIENT, ref opts, Marshal.SizeOf<WTA_OPTIONS>());
+        }
+
+        private void OnAeroClosed(object sender, EventArgs e)
+        {
+            if (_mouseHook != IntPtr.Zero)
+            {
+                UnhookWindowsHookEx(_mouseHook);
+                _mouseHook = IntPtr.Zero;
+            }
+            _mouseHookProc = null;
+
+            Win32Properties.RemoveWindowStylesCallback(_window, WindowStylesCallback);
+            Win32Properties.RemoveWndProcHookCallback(_window, FrameHook);
+            _window.Opened -= OnAeroOpened;
+            _window.Closed -= OnAeroClosed;
+
+            _frameLogo?.Dispose();
+            _btnSplit?.Dispose();
+            _btnMinimize?.Dispose();
+            _btnMaximize?.Dispose();
+            _btnRestore?.Dispose();
+            _btnClose?.Dispose();
+            if (_blankIcon != IntPtr.Zero) DestroyIcon(_blankIcon);
+
+            _frameLogo = null;
+            _btnSplit = _btnMinimize = _btnMaximize = _btnRestore = _btnClose = null;
+            _blankIcon = IntPtr.Zero;
+            _aeroHwnd = _aeroOverlay = IntPtr.Zero;
         }
 
 
@@ -152,15 +245,17 @@ namespace Skymu.AvaloniaTools
             Debug.WriteLine($"[Skymu] SkypeAero: hwnd=0x{_aeroHwnd.ToInt64():X}");
             if (_aeroHwnd == IntPtr.Zero) return;
 
-            var opts = new WTA_OPTIONS { Flags = WTNCA_NODRAWICON | WTNCA_NODRAWCAPTION, Mask = WTNCA_NODRAWICON | WTNCA_NODRAWCAPTION };
-            int hr = SetWindowThemeAttribute(_aeroHwnd, WTA_NONCLIENT, ref opts, Marshal.SizeOf<WTA_OPTIONS>());
-            Debug.WriteLine($"[Skymu] SkypeAero: SetWindowThemeAttribute hr=0x{hr:X8}");
+            HideNativeCaptionButtons(_aeroHwnd);
             HideNativeIcon();
 
             _aeroOverlay = CreateWindowExW(0x80000 | 0x20 | 0x80 | 0x08000000, "Static", null, 0x80000000,
                 0, 0, 1, 1, _aeroHwnd, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
             Debug.WriteLine($"[Skymu] SkypeAero: overlay=0x{_aeroOverlay.ToInt64():X}");
-            if (_aeroOverlay != IntPtr.Zero) RefreshAeroOverlay();
+            if (_aeroOverlay != IntPtr.Zero)
+            {
+                HideNativeCaptionButtons(_aeroOverlay);
+                RefreshAeroOverlay();
+            }
         }
 
         #endregion
@@ -175,7 +270,18 @@ namespace Skymu.AvaloniaTools
                         long l = lParam.ToInt64();
                         int x = (short)(l & 0xFFFF), y = (short)((l >> 16) & 0xFFFF);
                         GetWindowRect(hWnd, out var wr);
-                        var r = LogoRect(hWnd, Dpi(hWnd));
+                        int dpi = Dpi(hWnd);
+                        int capH = CaptionHeight(dpi);
+                        int w = wr.Right - wr.Left;
+                        var buttons = CaptionButtonRects(hWnd, wr, dpi, capH, w);
+                        for (int i = 0; i < buttons.Length; i++)
+                        {
+                            if (!Contains(buttons[i], wr, x, y)) continue;
+                            handled = true;
+                            return (IntPtr)NativeHitForButton(i);
+                        }
+
+                        var r = LogoRect(hWnd, dpi);
                         if (x >= wr.Left + r.X && x < wr.Left + r.Right && y >= wr.Top + r.Y && y < wr.Top + r.Bottom)
                         {
                             handled = true;
@@ -183,8 +289,66 @@ namespace Skymu.AvaloniaTools
                         }
                         break;
                     }
+                case WM_NCMOUSEMOVE:
+                    {
+                        int button = HitCodeToButton(wParam);
+                        if (button >= 0)
+                        {
+                            StartCaptionButtonTracking(hWnd);
+                            if (_captionButtonHover != button)
+                            {
+                                _captionButtonHover = button;
+                                QueueAeroRefresh();
+                            }
+                        }
+                        else if (_captionButtonHover != -1)
+                        {
+                            _captionButtonHover = -1;
+                            QueueAeroRefresh();
+                        }
+                        break;
+                    }
+                case WM_NCMOUSELEAVE:
+                    _trackingCaptionButtons = false;
+                    if (_captionButtonHover != -1 || _captionButtonDown != -1)
+                    {
+                        _captionButtonHover = -1;
+                        _captionButtonDown = -1;
+                        QueueAeroRefresh();
+                    }
+                    break;
+                case WM_NCLBUTTONDOWN:
+                    {
+                        int button = HitCodeToButton(wParam);
+                        if (button >= 0)
+                        {
+                            _captionButtonDown = button;
+                            QueueAeroRefresh();
+                            handled = true;
+                            return IntPtr.Zero;
+                        }
+                        break;
+                    }
+                case WM_NCLBUTTONUP:
+                    {
+                        int button = HitCodeToButton(wParam);
+                        if (button >= 0)
+                        {
+                            _captionButtonDown = -1;
+                            QueueAeroRefresh();
+                            handled = true;
+                            return IntPtr.Zero;
+                        }
+                        break;
+                    }
                 case WM_NCACTIVATE:
                     _aeroActive = wParam != IntPtr.Zero;
+                    if (!_aeroActive)
+                    {
+                        _captionButtonHover = -1;
+                        _captionButtonDown = -1;
+                        _trackingCaptionButtons = false;
+                    }
                     QueueAeroRefresh();
                     break;
                 case WM_SETTEXT:
@@ -194,7 +358,7 @@ namespace Skymu.AvaloniaTools
                     QueueAeroRefresh();
                     break;
                 case WM_SIZE:
-                    if (wParam == (IntPtr)1 /*SIZE_MINIMIZED*/ && _aeroOverlay != IntPtr.Zero) ShowWindow(_aeroOverlay, 0);
+                    if (wParam == (IntPtr)1 && _aeroOverlay != IntPtr.Zero) ShowWindow(_aeroOverlay, 0);
                     else QueueAeroRefresh();
                     break;
                 case WM_SHOWWINDOW:
@@ -205,12 +369,75 @@ namespace Skymu.AvaloniaTools
                     {
                         var wp = Marshal.PtrToStructure<WINDOWPOS>(lParam);
                         if ((wp.flags & SWP_NOSIZE) == 0) QueueAeroRefresh();
-                        else if (_aeroOverlay != IntPtr.Zero)  
+                        else if (_aeroOverlay != IntPtr.Zero)
                             SetWindowPos(_aeroOverlay, IntPtr.Zero, wp.x, wp.y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
                         break;
                     }
             }
             return IntPtr.Zero;
+        }
+
+        private IntPtr MouseHookProc(int nCode, IntPtr wParam, IntPtr lParam)
+        {
+            if (nCode >= 0 && _aeroHwnd != IntPtr.Zero)
+            {
+                uint msg = (uint)wParam.ToInt64();
+                var info = Marshal.PtrToStructure<MSLLHOOKSTRUCT>(lParam);
+                int button = HitCaptionButtonAt(info.pt.X, info.pt.Y);
+
+                switch (msg)
+                {
+                    case WM_MOUSEMOVE:
+                    case WM_NCMOUSEMOVE:
+                        SetCaptionButtonHover(button);
+                        break;
+                    case WM_LBUTTONDOWN:
+                    case WM_NCLBUTTONDOWN:
+                        if (_captionButtonDown != button)
+                        {
+                            _captionButtonDown = button;
+                            QueueAeroRefresh();
+                        }
+                        break;
+                    case WM_LBUTTONUP:
+                    case WM_NCLBUTTONUP:
+                        {
+                            bool clicked = button >= 0 && _captionButtonDown == button;
+                            if (_captionButtonDown != -1)
+                            {
+                                _captionButtonDown = -1;
+                                QueueAeroRefresh();
+                            }
+                            if (clicked)
+                            {
+                                IntPtr point = (IntPtr)((info.pt.Y << 16) | (info.pt.X & 0xFFFF));
+                                ActivateCaptionButton(_aeroHwnd, button, point);
+                            }
+                            break;
+                        }
+                }
+            }
+            return CallNextHookEx(_mouseHook, nCode, wParam, lParam);
+        }
+
+        private void SetCaptionButtonHover(int button)
+        {
+            if (_captionButtonHover == button) return;
+            _captionButtonHover = button;
+            if (button >= 0) StartCaptionButtonTracking(_aeroHwnd);
+            QueueAeroRefresh();
+        }
+
+        private int HitCaptionButtonAt(int x, int y)
+        {
+            if (_aeroHwnd == IntPtr.Zero || IsIconic(_aeroHwnd) || !IsWindowVisible(_aeroHwnd)) return -1;
+
+            GetWindowRect(_aeroHwnd, out var wr);
+            int dpi = Dpi(_aeroHwnd);
+            var buttons = CaptionButtonRects(_aeroHwnd, wr, dpi, CaptionHeight(dpi), wr.Right - wr.Left);
+            for (int i = 0; i < buttons.Length; i++)
+                if (Contains(buttons[i], wr, x, y)) return i;
+            return -1;
         }
 
         private void QueueAeroRefresh()
@@ -254,6 +481,110 @@ namespace Skymu.AvaloniaTools
             return new System.Drawing.Rectangle(x, top + (bottom - top - h) / 2, w, h);
         }
 
+        private static int CaptionHeight(int dpi) =>
+            Metric(SM_CYCAPTION, dpi) + Metric(SM_CYSIZEFRAME, dpi) + Metric(SM_CXPADDEDBORDER, dpi);
+
+        private static int ScalePx(int px96, int dpi) => (int)Math.Round(px96 * dpi / 96.0);
+
+        private System.Drawing.Rectangle[] CaptionButtonRects(IntPtr hwnd, RECT win, int dpi, int capH, int w)
+        {
+            int[] baseWidths = { 26, 24, 24, 42 };
+            int[] widths = new int[baseWidths.Length];
+            int total = 0;
+            for (int i = 0; i < widths.Length; i++)
+            {
+                widths[i] = ScalePx(baseWidths[i], dpi);
+                total += widths[i];
+            }
+
+            int h = ScalePx(18, dpi);
+            int border = Metric(SM_CXFRAME, dpi) + Metric(SM_CXPADDEDBORDER, dpi);
+            int right = w - border;
+            int top = 0;
+
+            if (DwmGetWindowAttribute(hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, out var ext, Marshal.SizeOf<RECT>()) == 0 &&
+                ext.Right > ext.Left && ext.Bottom > ext.Top)
+            {
+                right = ext.Right - win.Left - border;
+                top = ext.Top - win.Top;
+            }
+
+            right = Math.Min(Math.Max(right, total), Math.Max(total, w - border));
+            top = Math.Min(Math.Max(top, 0), Math.Max(0, capH - h));
+
+            int overlap = ScalePx(1, dpi);
+            int span = total - overlap * (widths.Length - 1);
+            right = Math.Min(Math.Max(right, span), Math.Max(span, w - border));
+
+            var rects = new System.Drawing.Rectangle[widths.Length];
+            int x = right - span;
+            for (int i = 0; i < widths.Length; i++)
+            {
+                rects[i] = new System.Drawing.Rectangle(x, top, widths[i], h);
+                x += widths[i] - (i < widths.Length - 1 ? overlap : 0);
+            }
+            return rects;
+        }
+
+        private static bool Contains(System.Drawing.Rectangle r, RECT win, int x, int y) =>
+            x >= win.Left + r.Left && x < win.Left + r.Right &&
+            y >= win.Top + r.Top && y < win.Top + r.Bottom;
+
+        private static int NativeHitForButton(int button)
+        {
+            switch (button)
+            {
+                case 0: return HTCAPTIONBUTTON_BASE;
+                case 1: return HTMINBUTTON;
+                case 2: return HTMAXBUTTON;
+                case 3: return HTCLOSE;
+                default: return HTNOWHERE;
+            }
+        }
+
+        private static int HitCodeToButton(IntPtr wParam)
+        {
+            long hit = wParam.ToInt64();
+            if (hit >= HTCAPTIONBUTTON_BASE && hit < HTCAPTIONBUTTON_BASE + 4)
+                return (int)(hit - HTCAPTIONBUTTON_BASE);
+            if (hit == HTMINBUTTON) return 1;
+            if (hit == HTMAXBUTTON) return 2;
+            if (hit == HTCLOSE) return 3;
+            return -1;
+        }
+
+        private void StartCaptionButtonTracking(IntPtr hwnd)
+        {
+            if (_trackingCaptionButtons) return;
+            var tme = new TRACKMOUSEEVENT
+            {
+                cbSize = Marshal.SizeOf<TRACKMOUSEEVENT>(),
+                dwFlags = TME_LEAVE | TME_NONCLIENT,
+                hwndTrack = hwnd
+            };
+            _trackingCaptionButtons = TrackMouseEvent(ref tme);
+        }
+
+        private void ActivateCaptionButton(IntPtr hwnd, int button, IntPtr lParam)
+        {
+            switch (button)
+            {
+                case 0:
+                    Universal.NotImplemented("Split Window");
+                    break;
+                case 1:
+                    PostMessage(hwnd, WM_SYSCOMMAND, (IntPtr)SC_MINIMIZE, lParam);
+                    break;
+                case 2:
+                    PostMessage(hwnd, WM_SYSCOMMAND,
+                        (IntPtr)(IsZoomed(hwnd) ? SC_RESTORE : SC_MAXIMIZE), lParam);
+                    break;
+                case 3:
+                    PostMessage(hwnd, WM_SYSCOMMAND, (IntPtr)SC_CLOSE, lParam);
+                    break;
+            }
+        }
+
         #endregion
 
         #region Sexy frutiger mode
@@ -267,9 +598,10 @@ namespace Skymu.AvaloniaTools
             GetWindowRect(main, out var wr);
             int dpi = Dpi(main);
             bool max = IsZoomed(main);
-            int capH = Metric(SM_CYCAPTION, dpi) + Metric(SM_CYSIZEFRAME, dpi) + Metric(SM_CXPADDEDBORDER, dpi);
+            int capH = CaptionHeight(dpi);
             int w = wr.Right - wr.Left;
             if (w <= 0 || capH <= 0) return;
+            var buttons = CaptionButtonRects(main, wr, dpi, capH, w);
 
             IntPtr screenDc = GetDC(IntPtr.Zero);
             IntPtr memDc = CreateCompatibleDC(screenDc);
@@ -287,8 +619,9 @@ namespace Skymu.AvaloniaTools
                     g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
                     g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
                     g.DrawImage(_frameLogo, logo);
+                    DrawCaptionButtons(g, buttons);
                 }
-                DrawAeroTitle(memDc, main, dpi, w, capH, max, logo);
+                DrawAeroTitle(memDc, main, dpi, w, capH, max, logo, buttons[0].Left - ScalePx(6, dpi));
                 GdiFlush();
 
                 var dst = new NativePoint { X = wr.Left, Y = wr.Top };
@@ -307,7 +640,32 @@ namespace Skymu.AvaloniaTools
             }
         }
 
-        private void DrawAeroTitle(IntPtr dc, IntPtr main, int dpi, int w, int capH, bool max, System.Drawing.Rectangle logo)
+        private void DrawCaptionButtons(System.Drawing.Graphics g, System.Drawing.Rectangle[] buttons)
+        {
+            var sheets = new[]
+            {
+                _btnSplit, _btnMinimize, IsZoomed(_aeroHwnd) ? _btnRestore : _btnMaximize, _btnClose
+            };
+
+            for (int i = 0; i < buttons.Length; i++)
+            {
+                var sheet = sheets[i];
+                if (sheet == null) continue;
+
+                int frameH = sheet.Height / 4;
+                if (frameH <= 0) continue;
+
+                int state = !_aeroActive ? 3
+                    : _captionButtonDown == i ? 2
+                    : _captionButtonHover == i ? 1
+                    : 0;
+
+                var src = new System.Drawing.Rectangle(0, state * frameH, sheet.Width, frameH);
+                g.DrawImage(sheet, buttons[i], src, System.Drawing.GraphicsUnit.Pixel);
+            }
+        }
+
+        private void DrawAeroTitle(IntPtr dc, IntPtr main, int dpi, int w, int capH, bool max, System.Drawing.Rectangle logo, int buttonsLeft)
         {
             string title = _window.Title;
             if (string.IsNullOrEmpty(title)) return;
@@ -349,8 +707,7 @@ namespace Skymu.AvaloniaTools
                     Left = logo.Right + 5 * dpi / 96,
                     Top = max ? Metric(SM_CYSIZEFRAME, dpi) + Metric(SM_CXPADDEDBORDER, dpi) : 0,
                     Bottom = capH,
-                    Right = DwmGetWindowAttribute(main, DWMWA_CAPTION_BUTTON_BOUNDS, out var btn, Marshal.SizeOf<RECT>()) == 0
-                        ? btn.Left - 6 : w - 130 * dpi / 96,
+                    Right = buttonsLeft,
                 };
                 if (rc.Right <= rc.Left) return;
 
@@ -369,7 +726,7 @@ namespace Skymu.AvaloniaTools
             DwmGetColorizationColor(out uint color, out bool opaque);
             int regOpaque = (Microsoft.Win32.Registry.GetValue(@"HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\DWM", "ColorizationOpaqueBlend", 1) as int?) ?? 1;
             int regTransp = (Microsoft.Win32.Registry.GetValue(@"HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize", "EnableTransparency", 0) as int?) ?? 0;
-            bool glassMod = Microsoft.Win32.Registry.GetValue(@"HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\DWM", "GlassType", null) != null; // OpenGlass
+            bool glassMod = Microsoft.Win32.Registry.GetValue(@"HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\DWM", "GlassType", null) != null; // OpenGlass 
             bool win8Plus = Environment.OSVersion.Version >= new Version(6, 2);
             return !opaque || regOpaque == 0 || (!win8Plus && (color >> 24) < 0xFF && regTransp == 1) || glassMod;
         }
