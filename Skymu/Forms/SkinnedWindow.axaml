@@ -16,9 +16,9 @@
     x:Class="Skymu.Forms.SkinnedWindow"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Skymu.Controls"
     xmlns:converters="clr-namespace:Skymu.Converters"
     xmlns:local="clr-namespace:Skymu"
-    xmlns:controls="clr-namespace:Skymu.Controls"
     Title="Skype™ - Window"
     MinWidth="518"
     MinHeight="394"
@@ -42,16 +42,16 @@
             Margin="11,10,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            ZIndex="10"
-            IsHitTestVisible="False"
             DefaultIndex="0"
             ElementCount="36"
             HoverIndex="-1"
             Interactive="False"
+            IsHitTestVisible="False"
             PressedIndex="-1"
             SliceMode="0"
             Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Dialog/icons.png'}"
-            StackDirection="Horizontal" />
+            StackDirection="Horizontal"
+            ZIndex="10" />
         <!--  Top Header Section  -->
         <Grid
             Grid.Row="0"
@@ -78,7 +78,10 @@
             Margin="77,17,35,7" />
 
         <!--  Bottom Button Section  -->
-        <Grid Grid.Row="2" Height="44" ZIndex="20">
+        <Grid
+            Grid.Row="2"
+            Height="44"
+            ZIndex="20">
             <Border
                 x:Name="GradientBottom"
                 Background="{DynamicResource Strip.Background}"
@@ -94,8 +97,6 @@
                 VerticalAlignment="Center"
                 Click="bELClick"
                 Content="Back"
-                
-                
                 IsDefault="False"
                 IsVisible="False" />
             <Grid x:Name="BottomControlsGrid">
@@ -111,64 +112,52 @@
                     Margin="15,0,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    
-                    
+                    IsVisible="False"
                     TextAlignment="Center"
-                    TextWrapping="Wrap"
-                    IsVisible="False" />
+                    TextWrapping="Wrap" />
                 <CheckBox
                     x:Name="BBCheckBox"
                     Margin="15,0,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     Content="{Binding [sF_CONFIRM_CBNOMORE], Source={StaticResource Lang}}"
-                    
-                    
                     Foreground="{DynamicResource Text.VeryHighContrast}"
                     IsVisible="False" />
-                <StackPanel
-    HorizontalAlignment="Right"
-    Orientation="Horizontal">
+                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                     <Button
-        x:Name="ButtonLeft"
-        Height="23"
-        MinWidth="73"
-        Margin="0,0,10,0"
-        Padding="12,0"
-        HorizontalAlignment="Left"
-        VerticalAlignment="Center"
-        Click="bLClick"
-        Content="{Binding [sF_CONFIRM_OK_BTN], Source={StaticResource Lang}}"
-        
-        
-        IsDefault="True"
-        IsVisible="True" />
+                        x:Name="ButtonLeft"
+                        Height="23"
+                        MinWidth="73"
+                        Margin="0,0,10,0"
+                        Padding="12,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Click="bLClick"
+                        Content="{Binding [sF_CONFIRM_OK_BTN], Source={StaticResource Lang}}"
+                        IsDefault="True"
+                        IsVisible="True" />
                     <Button
-        x:Name="ButtonMiddle"
-        Height="23"
-        MinWidth="73"
-        Margin="0,0,10,0"
-        Padding="12,0"
-        HorizontalAlignment="Center"
-        VerticalAlignment="Center"
-        Click="bMClick"
-        Content="{Binding [sZAPBUTTON_DUMMYMIDDLE], Source={StaticResource Lang}}"
-        
-        
-        IsDefault="False"
-        IsVisible="False" />
+                        x:Name="ButtonMiddle"
+                        Height="23"
+                        MinWidth="73"
+                        Margin="0,0,10,0"
+                        Padding="12,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Click="bMClick"
+                        Content="{Binding [sZAPBUTTON_DUMMYMIDDLE], Source={StaticResource Lang}}"
+                        IsDefault="False"
+                        IsVisible="False" />
                     <Button
-        x:Name="ButtonRight"
-        Height="23"
-        MinWidth="73"
-        Margin="0,0,10,0"
-        Padding="12,0"
-        HorizontalAlignment="Right"
-        VerticalAlignment="Center"
-        Click="bRClick"
-        Content="{Binding [sZAPBUTTON_CANCEL], Source={StaticResource Lang}}"
-        
-         />
+                        x:Name="ButtonRight"
+                        Height="23"
+                        MinWidth="73"
+                        Margin="0,0,10,0"
+                        Padding="12,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Click="bRClick"
+                        Content="{Binding [sZAPBUTTON_CANCEL], Source={StaticResource Lang}}" />
                 </StackPanel>
             </Grid>
         </Grid>

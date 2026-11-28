@@ -1,60 +1,60 @@
 ﻿<!--
-============================================================
-Copyright © The Skymu Team and other contributors.
-For any inquiries or concerns, email contact@skymu.app.
-============================================================
-Modification or redistribution of this code is governed
-by the terms set out in the project license agreement.
-If you do not comply with those terms, you may not
-modify or distribute any original code from the project.
-============================================================
-License: https://skymu.app/legal/license
-SPDX-License-Identifier: AGPL-3.0-or-later
-============================================================
+    ============================================================
+    Copyright © The Skymu Team and other contributors.
+    For any inquiries or concerns, email contact@skymu.app.
+    ============================================================
+    Modification or redistribution of this code is governed
+    by the terms set out in the project license agreement.
+    If you do not comply with those terms, you may not
+    modify or distribute any original code from the project.
+    ============================================================
+    License: https://skymu.app/legal/license
+    SPDX-License-Identifier: AGPL-3.0-or-later
+    ============================================================
 -->
 <Application
-x:Class="Skymu.Universal"
-xmlns="https://github.com/avaloniaui"
-xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-xmlns:local="clr-namespace:Skymu"
-xmlns:media="using:Avalonia.Media"
-xmlns:preferences="clr-namespace:Skymu.Preferences"
-RequestedThemeVariant="Light">
-	<Application.Styles>
-		<Style Selector="Window, UserControl, Popup, ToolTip, Button">
-			<Setter Property="UseLayoutRounding" Value="True" />
-		</Style>
-		<Style Selector="Window, UserControl, Button">
-		
-			<Setter Property="FontFamily" Value="Tahoma" />
-			<Setter Property="FontSize" Value="11" />
-		</Style>
-				<Style Selector="Window, UserControl">
-			<Setter Property="Foreground" Value="{DynamicResource Text.VeryHighContrast}" />
+    x:Class="Skymu.Universal"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:Skymu"
+    xmlns:media="using:Avalonia.Media"
+    xmlns:preferences="clr-namespace:Skymu.Preferences"
+    RequestedThemeVariant="Light">
+    <Application.Styles>
+        <Style Selector="Window, UserControl, Popup, ToolTip, Button">
+            <Setter Property="UseLayoutRounding" Value="True" />
+        </Style>
+        <Style Selector="Window, UserControl, Button">
 
-		</Style>
-		<!--  This fixes the red hyperlink hover color  -->
-		<Style Selector="HyperlinkButton">
-			<Setter Property="Foreground" Value="{DynamicResource Text.Hyperlink}" />
-		</Style>
-		<Style Selector="HyperlinkButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-			<Setter Property="Foreground" Value="{DynamicResource Accent}" />
-		</Style>
-		<Style Selector="ContextMenu">
-			<Setter Property="Padding" Value="0" />
-			<Setter Property="Margin" Value="0" />
-		</Style>
-		<Style Selector="Image">
-			<Setter Property="UseLayoutRounding" Value="True" />
-		</Style>
-	</Application.Styles>
-	<Application.Resources>
-		<ResourceDictionary>
-			<media:TextRenderingMode x:Key="AppTextRenderingMode">SubpixelAntialias</media:TextRenderingMode>
-			<ResourceDictionary.MergedDictionaries>
-				<ResourceInclude Source="avares://Skymu/UIComponents/ContextMenus.axaml"/>
-			</ResourceDictionary.MergedDictionaries>
-			<local:LanguageManager x:Key="Lang" />
-		</ResourceDictionary>
-	</Application.Resources>
+            <Setter Property="FontFamily" Value="Tahoma" />
+            <Setter Property="FontSize" Value="11" />
+        </Style>
+        <Style Selector="Window, UserControl">
+            <Setter Property="Foreground" Value="{DynamicResource Text.VeryHighContrast}" />
+
+        </Style>
+        <!--  This fixes the red hyperlink hover color  -->
+        <Style Selector="HyperlinkButton">
+            <Setter Property="Foreground" Value="{DynamicResource Text.Hyperlink}" />
+        </Style>
+        <Style Selector="HyperlinkButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource Accent}" />
+        </Style>
+        <Style Selector="ContextMenu">
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Margin" Value="0" />
+        </Style>
+        <Style Selector="Image">
+            <Setter Property="UseLayoutRounding" Value="True" />
+        </Style>
+    </Application.Styles>
+    <Application.Resources>
+        <ResourceDictionary>
+            <media:TextRenderingMode x:Key="AppTextRenderingMode">SubpixelAntialias</media:TextRenderingMode>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://Skymu/UIComponents/ContextMenus.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <local:LanguageManager x:Key="Lang" />
+        </ResourceDictionary>
+    </Application.Resources>
 </Application>

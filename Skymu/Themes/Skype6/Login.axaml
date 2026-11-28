@@ -16,35 +16,32 @@
     x:Class="Skymu.Skype6.Login"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Skymu.Controls"
     xmlns:converters="clr-namespace:Skymu.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:global="clr-namespace:Skymu"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:preferences="clr-namespace:Skymu.Preferences"
     xmlns:theming="clr-namespace:Skymu.Theming"
-    xmlns:controls="clr-namespace:Skymu.Controls"
     Title="{Binding [sMAINMENU_SKYPE]}"
     Width="526"
     Height="429"
     Background="{DynamicResource Accent}"
+    CanResize="False"
     Closing="Login_Closing"
     DataContext="{StaticResource Lang}"
-    
-    
     Loaded="Login_Loaded"
-    CanResize="False"
-    
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
-<Window.Styles>
-    <Style Selector="HyperlinkButton">
-        <Setter Property="Foreground" Value="{DynamicResource Text.Hyperlink}" />
-    </Style>
-</Window.Styles>
+    <Window.Styles>
+        <Style Selector="HyperlinkButton">
+            <Setter Property="Foreground" Value="{DynamicResource Text.Hyperlink}" />
+        </Style>
+    </Window.Styles>
     <Grid>
 
         <Grid.RowDefinitions>
-            <RowDefinition  Height="20" />
+            <RowDefinition Height="20" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Rectangle
@@ -54,7 +51,7 @@
             HorizontalAlignment="Center"
             Fill="{DynamicResource Card.Background}"
             Stretch="Fill" />
-         <controls:LoginMenuBar Grid.Row="0" x:Name="MenuBar"/>
+        <controls:LoginMenuBar x:Name="MenuBar" Grid.Row="0" />
         <Grid Grid.Row="1">
             <Image
                 Width="510"
@@ -65,10 +62,8 @@
                 Width="128"
                 Height="128"
                 Margin="0,0,0,48"
-                RenderTransformOrigin="0.50785,0.5001"
-                Source="Assets/Universal/Animations/spinner.png"
-                IsVisible="False">
-            </Image>
+                IsVisible="False"
+                Source="Assets/Universal/Animations/spinner.png" />
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -134,19 +129,19 @@
                             Margin="0,0,0,4"
                             FontWeight="Normal"
                             Text="{Binding [sF_USERENTRY_LABEL_PASSWORD]}" />
-						<TextBox
+                        <TextBox
                             x:Name="PasswordTokenBox"
-                            PasswordChar="●"
                             Width="240"
                             Height="21"
-                            Margin="0,0,0,7" />
-<HyperlinkButton
-    x:Name="ForgotPasswordLink"
-    Height="28"
-    Margin="0,0,0,0"
-    FontWeight="Normal"
-    Content="Unable to login? Ask for help here!"
-    Click="Hyperlink_Click" />
+                            Margin="0,0,0,7"
+                            PasswordChar="●" />
+                        <HyperlinkButton
+                            x:Name="ForgotPasswordLink"
+                            Height="28"
+                            Margin="0,0,0,0"
+                            Click="Hyperlink_Click"
+                            Content="Unable to login? Ask for help here!"
+                            FontWeight="Normal" />
 
                         <!--  Sign-in button  -->
 
@@ -194,8 +189,6 @@
                                 Margin="0,0,0,5"
                                 Padding="5,0,0,0"
                                 Content="{Binding [sF_USERENTRY_CB_STOREPASSWORD]}"
-                                
-                                
                                 Foreground="{DynamicResource Text.VeryLowContrast}"
                                 IsChecked="{Binding Path=[SaveCredentials], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
                             <CheckBox
@@ -203,8 +196,6 @@
                                 Height="16"
                                 Padding="5,0,0,0"
                                 Content="{Binding [sF_USERENTRY_CB_START_SKYPE]}"
-                                
-                                
                                 Foreground="{DynamicResource Text.VeryLowContrast}"
                                 IsChecked="{Binding Path=[AutoLaunch], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
                         </StackPanel>

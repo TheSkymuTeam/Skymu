@@ -25,16 +25,21 @@
     mc:Ignorable="d">
 
     <UserControl.Styles>
-        <Style Selector="Button.pill">
-
-        </Style>
+        <Style Selector="Button.pill" />
     </UserControl.Styles>
 
     <Grid Background="{DynamicResource Home.Column.Background}" ColumnDefinitions="649,*">
 
-        <Grid Grid.Column="0" Background="White" RowDefinitions="49,Auto,*">
+        <Grid
+            Grid.Column="0"
+            Background="White"
+            RowDefinitions="49,Auto,*">
 
-            <Border Grid.Row="0" Background="{DynamicResource Home.Banner.Background}" BorderBrush="{DynamicResource Sidebar.Header}" BorderThickness="0,0,0,1">
+            <Border
+                Grid.Row="0"
+                Background="{DynamicResource Home.Banner.Background}"
+                BorderBrush="{DynamicResource Sidebar.Header}"
+                BorderThickness="0,0,0,1">
                 <Grid Margin="16,2,16,0">
                     <TextBlock
                         x:Name="LearnHeader"
@@ -55,9 +60,9 @@
 
             <Border
                 Grid.Row="1"
+                Background="{DynamicResource Home.ContactsArea.Background}"
                 BorderBrush="{DynamicResource Home.AlertsContainer.Border}"
-                BorderThickness="0,0,0,1"
-                Background="{DynamicResource Home.ContactsArea.Background}">
+                BorderThickness="0,0,0,1">
 
                 <StackPanel Margin="16,19,16,0">
 
@@ -85,8 +90,8 @@
                                 Padding="0"
                                 Classes="pill"
                                 Click="SettingsButton_Click"
-                                CornerRadius="8"
-                                Content="Configure" />
+                                Content="Configure"
+                                CornerRadius="8" />
                         </StackPanel>
                     </Grid>
 
@@ -96,8 +101,8 @@
                             Width="48"
                             Height="48"
                             VerticalAlignment="Top"
-                            Background="{DynamicResource Home.Column.Background}"   
-                            BorderBrush="{DynamicResource Avatar.Shadow}"   
+                            Background="{DynamicResource Home.Column.Background}"
+                            BorderBrush="{DynamicResource Avatar.Shadow}"
                             BorderThickness="1">
                             <Image x:Name="MyAvatar" Stretch="UniformToFill" />
                         </Border>
@@ -193,7 +198,7 @@
             </Border>
         </Grid>
 
-        <!-- ================= Right gutter TODO add advertisements! ================= -->
+        <!--  ================= Right gutter TODO add advertisements! =================  -->
         <Border
             Grid.Column="1"
             BorderBrush="#D0D0D0"

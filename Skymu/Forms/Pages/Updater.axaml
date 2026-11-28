@@ -19,10 +19,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Skymu.Forms.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    
-    
-    Foreground="{DynamicResource Text.VeryHighContrast}"
-    >
+    Foreground="{DynamicResource Text.VeryHighContrast}">
     <StackPanel
         Height="210"
         VerticalAlignment="Top"
@@ -52,8 +49,6 @@
             <TextBlock
                 Name="UpdateStatusText"
                 Grid.Row="0"
-                
-                
                 Text="Update progress goes here" />
             <ProgressBar
                 x:Name="ProgBar"
@@ -66,10 +61,8 @@
                 Grid.Row="2"
                 Margin="0,4,0,0"
                 HorizontalAlignment="Right"
-                
-                
-                Text="File size 3233.5 KB"
-                IsVisible="False" />
+                IsVisible="False"
+                Text="File size 3233.5 KB" />
         </Grid>
     </StackPanel>
 

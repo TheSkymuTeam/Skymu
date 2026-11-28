@@ -26,10 +26,7 @@
     HorizontalAlignment="Stretch"
     VerticalAlignment="Stretch"
     DataContext="{StaticResource Lang}"
-    
-    
     Foreground="{DynamicResource Text.VeryHighContrast}"
-    
     mc:Ignorable="d">
     <!--  Commented out as the page is a scrolling thing  -->
     <!--  Re-add to Page when the view becomes small enough to not require a ScrollViewer  -->
@@ -51,7 +48,6 @@
                 <TextBox
                     x:Name="SC_BrandingNameBox"
                     Width="250"
-                    
                     Text="{Binding Path=[BrandingName], Mode=TwoWay, Source={x:Static preferences:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
 
@@ -60,16 +56,16 @@
                     Padding="0,0,10,0"
                     VerticalAlignment="Center"
                     Text="{Binding [sF_USERINFO_LABEL_LANGUAGE]}" />
-<ComboBox
-    Width="250"
-    ItemsSource="{Binding Languages}"
-    SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}">
-    <ComboBox.ItemTemplate>
-        <DataTemplate>
-            <TextBlock Text="{Binding Key}" />
-        </DataTemplate>
-    </ComboBox.ItemTemplate>
-</ComboBox>
+                <ComboBox
+                    Width="250"
+                    ItemsSource="{Binding Languages}"
+                    SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Key}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
             </StackPanel>
             <StackPanel Margin="0,5" Orientation="Horizontal">
                 <CheckBox
@@ -93,27 +89,27 @@
                     Padding="0,0,10,0"
                     VerticalAlignment="Center"
                     Text="User interface" />
-<ComboBox
-    Width="250"
-    SelectedValue="{Binding Path=[Theme], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
-    SelectedValueBinding="{Binding Tag}">
-    <ComboBoxItem
-        Padding="6,0"
-        Content="Skype 4"
-        Tag="Skype4" />
-    <ComboBoxItem
-        Padding="6,0"
-        Content="Skype 5"
-        Tag="Skype5" />
-    <ComboBoxItem
-        Padding="6,0"
-        Content="Skype 6"
-        Tag="Skype6" />
-    <ComboBoxItem
-        Padding="6,0"
-        Content="Skype 7 (experimental)"
-        Tag="Skype7" />
-</ComboBox>
+                <ComboBox
+                    Width="250"
+                    SelectedValue="{Binding Path=[Theme], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
+                    SelectedValueBinding="{Binding Tag}">
+                    <ComboBoxItem
+                        Padding="6,0"
+                        Content="Skype 4"
+                        Tag="Skype4" />
+                    <ComboBoxItem
+                        Padding="6,0"
+                        Content="Skype 5"
+                        Tag="Skype5" />
+                    <ComboBoxItem
+                        Padding="6,0"
+                        Content="Skype 6"
+                        Tag="Skype6" />
+                    <ComboBoxItem
+                        Padding="6,0"
+                        Content="Skype 7 (experimental)"
+                        Tag="Skype7" />
+                </ComboBox>
                 <TextBlock
                     Margin="8,0,0,0"
                     VerticalAlignment="Center"
@@ -127,31 +123,31 @@
                     Padding="0,0,10,0"
                     VerticalAlignment="Center"
                     Text="Window chrome" />
-<ComboBox
-    Width="250"
-    SelectedValue="{Binding Path=[WindowChrome], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
-    SelectedValueBinding="{Binding Tag}">
+                <ComboBox
+                    Width="250"
+                    SelectedValue="{Binding Path=[WindowChrome], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
+                    SelectedValueBinding="{Binding Tag}">
 
-    <ComboBoxItem
-        Padding="6,0"
-        Content="Skype Aero"
-        Tag="{x:Static enums:WindowChrome.SkypeAero}" />
+                    <ComboBoxItem
+                        Padding="6,0"
+                        Content="Skype Aero"
+                        Tag="{x:Static enums:WindowChrome.SkypeAero}" />
 
-    <ComboBoxItem
-        Padding="6,0"
-        Content="Skype XP"
-        Tag="{x:Static enums:WindowChrome.SkypeXP}" />
+                    <ComboBoxItem
+                        Padding="6,0"
+                        Content="Skype XP"
+                        Tag="{x:Static enums:WindowChrome.SkypeXP}" />
 
-        <ComboBoxItem
-        Padding="6,0"
-        Content="Skype Aero with acrylic blur"
-        Tag="{x:Static enums:WindowChrome.Acrylic}" />
+                    <ComboBoxItem
+                        Padding="6,0"
+                        Content="Skype Aero with acrylic blur"
+                        Tag="{x:Static enums:WindowChrome.Acrylic}" />
 
-    <ComboBoxItem
-        Padding="6,0"
-        Content="Use the system window chrome"
-        Tag="{x:Static enums:WindowChrome.Native}" />
-</ComboBox>
+                    <ComboBoxItem
+                        Padding="6,0"
+                        Content="Use the system window chrome"
+                        Tag="{x:Static enums:WindowChrome.Native}" />
+                </ComboBox>
                 <TextBlock
                     Margin="8,0,0,0"
                     VerticalAlignment="Center"
@@ -164,17 +160,17 @@
                     Padding="0,0,10,0"
                     VerticalAlignment="Center"
                     Text="Color theme" />
-<ComboBox
-    Width="250"
-    ItemsSource="{x:Static theming:Colorizer.Colorways}"
-    SelectedValue="{Binding Path=[Colorway], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
-    SelectedValueBinding="{Binding Key}">
-    <ComboBox.ItemTemplate>
-        <DataTemplate>
-            <TextBlock Text="{Binding Key}" />
-        </DataTemplate>
-    </ComboBox.ItemTemplate>
-</ComboBox>
+                <ComboBox
+                    Width="250"
+                    ItemsSource="{x:Static theming:Colorizer.Colorways}"
+                    SelectedValue="{Binding Path=[Colorway], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
+                    SelectedValueBinding="{Binding Key}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Key}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
                 <TextBlock
                     Margin="8,0,0,0"
                     VerticalAlignment="Center"
@@ -187,59 +183,59 @@
                     Padding="0,0,10,0"
                     VerticalAlignment="Center"
                     Text="Sound pack" />
-<ComboBox
-    x:Name="ComboSoundPack"
-    Width="250"
-    SelectedValue="{Binding Path=[SoundPack], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
-    SelectedValueBinding="{Binding Tag}">
+                <ComboBox
+                    x:Name="ComboSoundPack"
+                    Width="250"
+                    SelectedValue="{Binding Path=[SoundPack], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
+                    SelectedValueBinding="{Binding Tag}">
 
-    <ComboBoxItem
-        Padding="6,0"
-        Content="Enhanced"
-        Tag="{x:Static enums:Soundpack.Enhanced}" />
+                    <ComboBoxItem
+                        Padding="6,0"
+                        Content="Enhanced"
+                        Tag="{x:Static enums:Soundpack.Enhanced}" />
 
-    <ComboBoxItem
-        Padding="6,0"
-        Content="Skype 1 and 2"
-        Tag="{x:Static enums:Soundpack.Skype2}" />
+                    <ComboBoxItem
+                        Padding="6,0"
+                        Content="Skype 1 and 2"
+                        Tag="{x:Static enums:Soundpack.Skype2}" />
 
-    <ComboBoxItem
-        Padding="6,0"
-        Content="Skype 3 to 7"
-        Tag="{x:Static enums:Soundpack.Skype7}" />
+                    <ComboBoxItem
+                        Padding="6,0"
+                        Content="Skype 3 to 7"
+                        Tag="{x:Static enums:Soundpack.Skype7}" />
 
-    <ComboBoxItem
-        Padding="6,0"
-        Content="Skype 8"
-        Tag="{x:Static enums:Soundpack.Skype8}" />
-</ComboBox>
+                    <ComboBoxItem
+                        Padding="6,0"
+                        Content="Skype 8"
+                        Tag="{x:Static enums:Soundpack.Skype8}" />
+                </ComboBox>
             </StackPanel>
             <StackPanel Margin="0,5" Orientation="Horizontal">
                 <TextBlock
                     Padding="0,0,10,0"
                     VerticalAlignment="Center"
                     Text="Base theme (scrollbar, buttons, etc)" />
-<ComboBox
-    Width="250"
-    SelectedValue="{Binding Path=[AvaloniaTheme], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
-    SelectedValueBinding="{Binding Tag}">
-                <ComboBoxItem
-        Padding="6,0"
-        Content="Draw native-styled controls (recommended)"
-        Tag="Native" />
-        <ComboBoxItem
-        Padding="6,0"
-        Content="Avalonia Fluent"
-        Tag="Avalonia.Fluent.Dynamic" />
-    <ComboBoxItem
-        Padding="6,0"
-        Content="Avalonia Simple"
-        Tag="Avalonia.Simple" />
-    <ComboBoxItem
-        Padding="6,0"
-        Content="Classic.Avalonia"
-        Tag="Classic.Avalonia" />
-</ComboBox>
+                <ComboBox
+                    Width="250"
+                    SelectedValue="{Binding Path=[AvaloniaTheme], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
+                    SelectedValueBinding="{Binding Tag}">
+                    <ComboBoxItem
+                        Padding="6,0"
+                        Content="Draw native-styled controls (recommended)"
+                        Tag="Native" />
+                    <ComboBoxItem
+                        Padding="6,0"
+                        Content="Avalonia Fluent"
+                        Tag="Avalonia.Fluent.Dynamic" />
+                    <ComboBoxItem
+                        Padding="6,0"
+                        Content="Avalonia Simple"
+                        Tag="Avalonia.Simple" />
+                    <ComboBoxItem
+                        Padding="6,0"
+                        Content="Classic.Avalonia"
+                        Tag="Classic.Avalonia" />
+                </ComboBox>
             </StackPanel>
 
             <CheckBox
@@ -369,10 +365,7 @@
                     Padding="0,0,10,0"
                     VerticalAlignment="Center"
                     Text="Amount of messages to fetch during initial conversation load" />
-                <TextBox
-                    Width="40"
-                    
-                    Text="{Binding [MsgLoadCount], Converter={StaticResource StringToIntegerConverter}, Mode=TwoWay, Source={x:Static preferences:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Width="40" Text="{Binding [MsgLoadCount], Converter={StaticResource StringToIntegerConverter}, Mode=TwoWay, Source={x:Static preferences:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
 
             <CheckBox
@@ -423,10 +416,7 @@
                     Padding="0,0,10,0"
                     VerticalAlignment="Center"
                     Text="Amount of Skype Credit (visual only)" />
-                <TextBox
-                    Width="80"
-                    
-                    Text="{Binding Path=[CredsText], Mode=TwoWay, Source={x:Static preferences:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Width="80" Text="{Binding Path=[CredsText], Mode=TwoWay, Source={x:Static preferences:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
 
             <StackPanel Margin="0,5" Orientation="Horizontal">
@@ -434,10 +424,7 @@
                     Padding="0,0,10,0"
                     VerticalAlignment="Center"
                     Text="Amount of Skype subscriptions (visual only)" />
-                <TextBox
-                    Width="40"
-                    
-                    Text="{Binding [CredsSubCount], Converter={StaticResource StringToIntegerConverter}, Mode=TwoWay, Source={x:Static preferences:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Width="40" Text="{Binding [CredsSubCount], Converter={StaticResource StringToIntegerConverter}, Mode=TwoWay, Source={x:Static preferences:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
 
             <Rectangle
@@ -457,27 +444,27 @@
                     Padding="0,0,10,0"
                     VerticalAlignment="Center"
                     Text="Display a notification for" />
-<ComboBox
-    Width="250"
-    SelectedValue="{Binding Path=[NotificationTrigger], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
-    SelectedValueBinding="{Binding Tag}">
-    <ComboBoxItem
-        Padding="6,0"
-        Content="all recieved messages"
-        Tag="{x:Static enums:NotificationTriggerType.ALL}" />
-    <ComboBoxItem
-        Padding="6,0"
-        Content="direct messages, replies, and pings"
-        Tag="{x:Static enums:NotificationTriggerType.PDM}" />
-    <ComboBoxItem
-        Padding="6,0"
-        Content="replies and pings"
-        Tag="{x:Static enums:NotificationTriggerType.PING}" />
-    <ComboBoxItem
-        Padding="6,0"
-        Content="direct messages"
-        Tag="{x:Static enums:NotificationTriggerType.DM}" />
-</ComboBox>
+                <ComboBox
+                    Width="250"
+                    SelectedValue="{Binding Path=[NotificationTrigger], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
+                    SelectedValueBinding="{Binding Tag}">
+                    <ComboBoxItem
+                        Padding="6,0"
+                        Content="all recieved messages"
+                        Tag="{x:Static enums:NotificationTriggerType.ALL}" />
+                    <ComboBoxItem
+                        Padding="6,0"
+                        Content="direct messages, replies, and pings"
+                        Tag="{x:Static enums:NotificationTriggerType.PDM}" />
+                    <ComboBoxItem
+                        Padding="6,0"
+                        Content="replies and pings"
+                        Tag="{x:Static enums:NotificationTriggerType.PING}" />
+                    <ComboBoxItem
+                        Padding="6,0"
+                        Content="direct messages"
+                        Tag="{x:Static enums:NotificationTriggerType.DM}" />
+                </ComboBox>
             </StackPanel>
             <CheckBox
                 Margin="0,5"
@@ -532,7 +519,7 @@
                 Margin="0,10,10,10"
                 Fill="{DynamicResource Card.Border}" />
 
-            
+
 
         </StackPanel>
     </ScrollViewer>

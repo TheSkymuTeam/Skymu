@@ -16,25 +16,22 @@
     x:Class="Skymu.Forms.IncomingCall"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:converters="clr-namespace:Skymu.Converters"
     xmlns:controls="clr-namespace:Skymu.Controls"
+    xmlns:converters="clr-namespace:Skymu.Converters"
     xmlns:global="clr-namespace:Skymu"
     xmlns:preferences="clr-namespace:Skymu.Preferences"
     Title="Incoming Call"
     Width="385"
-    TransparencyLevelHint="Transparent"
     Background="Transparent"
-    
-    
-    PointerPressed="OnDrag"
     CanResize="False"
+    PointerPressed="OnDrag"
     ShowActivated="False"
     ShowInTaskbar="False"
     SizeToContent="Height"
-    
+    SystemDecorations="None"
     Topmost="True"
-    WindowStartupLocation="CenterScreen"
-    SystemDecorations="None">
+    TransparencyLevelHint="Transparent"
+    WindowStartupLocation="CenterScreen">
     <Window.Resources>
 
         <converters:AssetLoader x:Key="AssetLoader" />
@@ -76,13 +73,13 @@
                         DefaultIndex="0"
                         ElementCount="5"
                         HoverIndex="1"
+                        IsVisible="True"
                         PointerPressed="OnClose"
                         PressedIndex="2"
                         SliceMode="0"
                         Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Incoming Call/round-button.png'}"
                         StackDirection="Vertical"
-                        Tag="NoDrag"
-                        IsVisible="True" />
+                        Tag="NoDrag" />
                     <Image
                         Width="12"
                         Height="16"

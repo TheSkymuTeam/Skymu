@@ -28,10 +28,7 @@
     d:Height="505"
     d:Width="514"
     DataContext="{StaticResource Lang}"
-    
-    
     Foreground="{DynamicResource Text.VeryHighContrast}"
-    
     mc:Ignorable="d">
 
     <ScrollViewer Margin="10">
@@ -39,35 +36,35 @@
 
             <StackPanel Margin="0,5" Orientation="Horizontal">
                 <CheckBox
-Margin="0,5"
-Padding="6, 0"
-Content="{Binding [sF_OPTIONS_LB_1]}"
-Foreground="{DynamicResource Text.VeryHighContrast}"
-IsChecked="False"
-IsEnabled="False"/>
+                    Margin="0,5"
+                    Padding="6,0"
+                    Content="{Binding [sF_OPTIONS_LB_1]}"
+                    Foreground="{DynamicResource Text.VeryHighContrast}"
+                    IsChecked="False"
+                    IsEnabled="False" />
             </StackPanel>
 
             <Separator Margin="2,2,5,2" Foreground="{DynamicResource Separator}" />
 
             <StackPanel Margin="0,5" Orientation="Horizontal">
                 <CheckBox
-Margin="0,5"
-Padding="6, 0"
-Content="{Binding [sF_OPTIONS_LB_2]}"
-Foreground="{DynamicResource Text.VeryHighContrast}"
-IsChecked="False"
-IsEnabled="False"/>
+                    Margin="0,5"
+                    Padding="6,0"
+                    Content="{Binding [sF_OPTIONS_LB_2]}"
+                    Foreground="{DynamicResource Text.VeryHighContrast}"
+                    IsChecked="False"
+                    IsEnabled="False" />
             </StackPanel>
 
             <Separator Margin="2,2,5,2" Foreground="{DynamicResource Separator}" />
 
             <StackPanel Margin="0,5" Orientation="Horizontal">
                 <CheckBox
-Margin="0,5"
-Padding="6, 0"
-Content="{Binding [sF_USERENTRY_CB_START_SKYPE]}"
-Foreground="{DynamicResource Text.VeryHighContrast}"
-IsChecked="{Binding Path=[AutoLaunch], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
+                    Margin="0,5"
+                    Padding="6,0"
+                    Content="{Binding [sF_USERENTRY_CB_START_SKYPE]}"
+                    Foreground="{DynamicResource Text.VeryHighContrast}"
+                    IsChecked="{Binding Path=[AutoLaunch], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
             </StackPanel>
 
             <Separator Margin="2,2,5,2" Foreground="{DynamicResource Separator}" />
@@ -78,30 +75,30 @@ IsChecked="{Binding Path=[AutoLaunch], Mode=TwoWay, Source={x:Static preferences
                     Padding="0,0,10,0"
                     VerticalAlignment="Center"
                     Text="{Binding [sF_USERINFO_LABEL_LANGUAGE]}" />
-<ComboBox
-    Width="250"
-    ItemsSource="{Binding Languages}"
-    SelectedValue="{Binding Path=[Language], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
-    SelectedValueBinding="{Binding Key}"
-    SelectionChanged="OnLanguageSelectionChanged">
-    <ComboBox.ItemTemplate>
-        <DataTemplate>
-            <TextBlock Text="{Binding Key}" />
-        </DataTemplate>
-    </ComboBox.ItemTemplate>
-</ComboBox>
+                <ComboBox
+                    Width="250"
+                    ItemsSource="{Binding Languages}"
+                    SelectedValue="{Binding Path=[Language], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
+                    SelectedValueBinding="{Binding Key}"
+                    SelectionChanged="OnLanguageSelectionChanged">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Key}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
             </StackPanel>
 
             <Separator Margin="2,2,5,2" Foreground="{DynamicResource Separator}" />
 
             <StackPanel Margin="0,5" Orientation="Horizontal">
                 <CheckBox
-Margin="0,5"
-Padding="6, 0"
-Content="{Binding [sOPTIONS_DISPLAY_AVATARS]}"
-Foreground="{DynamicResource Text.VeryHighContrast}"
-IsChecked="False"
-IsEnabled="False"/>
+                    Margin="0,5"
+                    Padding="6,0"
+                    Content="{Binding [sOPTIONS_DISPLAY_AVATARS]}"
+                    Foreground="{DynamicResource Text.VeryHighContrast}"
+                    IsChecked="False"
+                    IsEnabled="False" />
             </StackPanel>
 
 

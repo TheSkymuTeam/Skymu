@@ -24,7 +24,10 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <TextBlock Foreground="{DynamicResource Text.HighContrast}" Grid.Row="0" TextWrapping="Wrap">
+        <TextBlock
+            Grid.Row="0"
+            Foreground="{DynamicResource Text.HighContrast}"
+            TextWrapping="Wrap">
             <TextBlock.Text>
                 <Binding
                     Path="[BrandingName]"
@@ -43,8 +46,6 @@
                 Padding="5"
                 Background="Transparent"
                 BorderThickness="0"
-                
-                
                 Foreground="#888888"
                 IsReadOnly="True"
                 Text="Error details go here"

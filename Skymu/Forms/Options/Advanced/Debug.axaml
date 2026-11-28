@@ -25,10 +25,7 @@
     HorizontalAlignment="Stretch"
     VerticalAlignment="Stretch"
     DataContext="{StaticResource Lang}"
-    
-    
     Foreground="{DynamicResource Text.VeryHighContrast}"
-    
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -85,7 +82,7 @@
             <StackPanel Orientation="Horizontal">
                 <Image Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/connection.png}" />
                 <TextBlock Margin="15,0,0,0" VerticalAlignment="Center">
-                    <HyperlinkButton Content="Contribute to Skymu" Click="OPEN_PR_URL"/>
+                    <HyperlinkButton Click="OPEN_PR_URL" Content="Contribute to Skymu" />
                 </TextBlock>
             </StackPanel>
         </StackPanel>

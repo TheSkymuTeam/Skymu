@@ -88,7 +88,7 @@
     <SolidColorBrush x:Key="Message.Author.Forward" Color="#00cc88" />
     <SolidColorBrush x:Key="Message.Border" Color="#EDE4EA" />
 
-        <LinearGradientBrush x:Key="Home.Banner.Background" StartPoint="0%,0%" EndPoint="0%,100%">
+    <LinearGradientBrush x:Key="Home.Banner.Background" StartPoint="0%,0%" EndPoint="0%,100%">
         <GradientStop Offset="0" Color="#FFFFFF" />
         <GradientStop Offset="1" Color="#FFFFDC" />
     </LinearGradientBrush>

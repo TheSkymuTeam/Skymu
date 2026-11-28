@@ -16,25 +16,22 @@
     x:Class="Skymu.Forms.Notification"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Skymu.Controls"
     xmlns:converters="clr-namespace:Skymu.Converters"
     xmlns:global="clr-namespace:Skymu"
-    xmlns:controls="clr-namespace:Skymu.Controls"
     xmlns:preferences="clr-namespace:Skymu.Preferences"
     Title="Notification"
     Width="240"
-    TransparencyLevelHint="Transparent"
     Background="Transparent"
-    
-    
     PointerEntered="Window_PointerEntered"
     PointerExited="Window_PointerExited"
     PointerPressed="Window_PointerPressed"
     ShowActivated="False"
     ShowInTaskbar="False"
     SizeToContent="Height"
-    
+    SystemDecorations="None"
     Topmost="True"
-    SystemDecorations="None">
+    TransparencyLevelHint="Transparent">
     <Window.Resources>
 
         <converters:AssetLoader x:Key="AssetLoader" />
@@ -70,12 +67,12 @@
                 DefaultIndex="2"
                 ElementCount="5"
                 HoverIndex="1"
+                IsVisible="False"
                 PointerPressed="CloseButton_Click"
                 PressedIndex="0"
                 SliceMode="0"
                 Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Notifications/close.png'}"
-                StackDirection="Vertical"
-                IsVisible="False" />
+                StackDirection="Vertical" />
             <Border Grid.Row="1" Padding="8,7">
                 <StackPanel x:Name="MessagesContainer" Orientation="Vertical" />
             </Border>

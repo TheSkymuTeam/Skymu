@@ -16,23 +16,20 @@
     x:Class="Skymu.Forms.Options"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Skymu.Controls"
     xmlns:converters="clr-namespace:Skymu.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:global="clr-namespace:Skymu"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:preferences="clr-namespace:Skymu.Preferences"
     xmlns:theming="clr-namespace:Skymu.Theming"
-    xmlns:controls="clr-namespace:Skymu.Controls"
     Width="716"
     Height="612"
     HorizontalAlignment="Left"
     VerticalAlignment="Top"
     Background="#d4e2f2"
-    DataContext="{StaticResource Lang}"
-    
-    
     CanMinimize="True"
-    
+    DataContext="{StaticResource Lang}"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
 
@@ -48,7 +45,7 @@
     </Window.Resources>
 
     <Window.Styles>
-		<Style Selector="controls|SliceControl.sidebarHeader">
+        <Style Selector="controls|SliceControl.sidebarHeader">
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="ElementCount" Value="5" />
             <Setter Property="DefaultIndex" Value="0" />
@@ -136,13 +133,13 @@
                 <controls:SliceControl
                     x:Name="HGeneral"
                     ButtonStateOnInit="Pressed"
+                    Classes="sidebarHeader"
                     DefaultIndex="3"
                     HoverIndex="-1"
                     IconHeight="24"
                     IconSource="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/general.png}"
                     PointerReleased="CatSelect"
                     PressedIndex="-1"
-                    Classes="sidebarHeader"
                     Text="{Binding [sF_OPTIONS_PAGE_GENERAL]}" />
                 <Grid x:Name="GGeneral">
                     <controls:SliceControl Classes="sidebarItemContainer" />
@@ -153,202 +150,202 @@
                         <controls:SliceControl
                             x:Name="General_Main"
                             ButtonStateOnInit="Pressed"
+                            Classes="sidebarButton"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/skype.png}"
-                            Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_PAGE_GENERAL]}" />
                         <controls:SliceControl
                             x:Name="General_Devices"
+                            Classes="sidebarButton"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/audio.png}"
-                            Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_PAGE_DEVICES]}" />
                         <controls:SliceControl
                             x:Name="General_Sounds"
+                            Classes="sidebarButton"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/sounds.png}"
-                            Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_PAGE_SOUNDS2]}" />
                         <controls:SliceControl
                             x:Name="General_Video"
+                            Classes="sidebarButton"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/video.png}"
-                            Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_PAGE_VIDEO]}" />
                         <controls:SliceControl
                             x:Name="General_Access"
+                            Classes="sidebarButton"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/access.png}"
-                            Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_PAGE_SKYACCESS]}" />
                         <!--  Skymu original  -->
                         <controls:SliceControl
                             x:Name="General_Skymu"
+                            Classes="sidebarButton"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/skymu.png}"
-                            Classes="sidebarButton"
                             Text="Skymu" />
                     </StackPanel>
                 </Grid>
                 <controls:SliceControl
                     x:Name="HPrivacy"
+                    Classes="sidebarHeader"
                     IconHeight="24"
                     IconSource="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/privacy.png}"
                     PointerReleased="CatSelect"
-                    Classes="sidebarHeader"
                     Text="{Binding [sF_OPTIONS_PAGE_PRIVACY]}" />
                 <Grid x:Name="GPrivacy" IsVisible="False">
                     <controls:SliceControl Classes="sidebarItemContainer" />
                     <StackPanel Grid.Row="1" Orientation="Vertical">
                         <controls:SliceControl
                             x:Name="Privacy_Main"
+                            Classes="sidebarButton"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/privacy_settings.png}"
-                            Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_PRIVACY_SETTINGS]}" />
                         <controls:SliceControl
                             x:Name="Privacy_Blocked"
+                            Classes="sidebarButton"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/blocked.png}"
-                            Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_BLOCKED_USERS]}" />
                     </StackPanel>
                 </Grid>
                 <controls:SliceControl
                     x:Name="HNotifications"
+                    Classes="sidebarHeader"
                     IconHeight="24"
                     IconSource="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/notifications.png}"
                     PointerReleased="CatSelect"
-                    Classes="sidebarHeader"
                     Text="{Binding [sF_OPTIONS_PAGE_NOTIFICATIONS]}" />
                 <Grid x:Name="GNotifications" IsVisible="False">
                     <controls:SliceControl Classes="sidebarItemContainer" />
                     <StackPanel Grid.Row="1" Orientation="Vertical">
                         <controls:SliceControl
                             x:Name="Notifications_Main"
+                            Classes="sidebarButton"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/notifications.png}"
-                            Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_LBC_NOTIFICATIONS]}" />
                         <controls:SliceControl
                             x:Name="Notifications_Alerts"
+                            Classes="sidebarButton"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/alerts.png}"
-                            Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_LBC_MESSAGES]}" />
                         <controls:SliceControl
                             x:Name="Notifications_Sounds"
+                            Classes="sidebarButton"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/sounds.png}"
-                            Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_PAGE_SOUNDS2]}" />
                     </StackPanel>
                 </Grid>
                 <controls:SliceControl
                     x:Name="HCalls"
+                    Classes="sidebarHeader"
                     IconSource="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/calls.png}"
                     PointerReleased="CatSelect"
-                    Classes="sidebarHeader"
                     Text="{Binding [sF_OPTIONS_CALLS]}" />
                 <Grid x:Name="GCalls" IsVisible="False">
                     <controls:SliceControl Classes="sidebarItemContainer" />
                     <StackPanel Grid.Row="1" Orientation="Vertical">
                         <controls:SliceControl
                             x:Name="Calls_Main"
+                            Classes="sidebarButton"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/calls.png}"
-                            Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_LB_CALL]}" />
                         <controls:SliceControl
                             x:Name="Calls_Forwarding"
+                            Classes="sidebarButton"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/forwarding.png}"
-                            Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_PAGE_FORWARDINGANDVOICEMAIL]}" />
                         <controls:SliceControl
                             x:Name="Calls_Voicemail"
+                            Classes="sidebarButton"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/voicemail.png}"
-                            Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_LBC_VOICEMAIL]}" />
                         <controls:SliceControl
                             x:Name="Calls_Video"
+                            Classes="sidebarButton"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/video.png}"
-                            Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_PAGE_VIDEO]}" />
                     </StackPanel>
                 </Grid>
                 <controls:SliceControl
                     x:Name="HChatsSMS"
+                    Classes="sidebarHeader"
                     IconSource="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/im_and_sms.png}"
                     PointerReleased="CatSelect"
-                    Classes="sidebarHeader"
                     Text="{Binding [sF_OPTIONS_CHATS_SMS]}" />
                 <Grid x:Name="GChatsSMS" IsVisible="False">
                     <controls:SliceControl Classes="sidebarItemContainer" />
                     <StackPanel Grid.Row="1" Orientation="Vertical">
                         <controls:SliceControl
                             x:Name="Chats_Main"
+                            Classes="sidebarButton"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/im.png}"
-                            Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_LB_CHAT_SETTINGS]}" />
                         <controls:SliceControl
                             x:Name="Chats_Appearance"
+                            Classes="sidebarButton"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/appearance.png}"
-                            Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_CHAT_APPEARANCE]}" />
                         <controls:SliceControl
                             x:Name="Chats_SMS"
+                            Classes="sidebarButton"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/sms.png}"
-                            Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_PAGE_SMS]}" />
                     </StackPanel>
                 </Grid>
                 <controls:SliceControl
                     x:Name="HAdvanced"
+                    Classes="sidebarHeader"
                     IconSource="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/advanced.png}"
                     PointerReleased="CatSelect"
-                    Classes="sidebarHeader"
                     Text="{Binding [sF_OPTIONS_PAGE_DEBUG]}" />
                 <Grid x:Name="GAdvanced" IsVisible="False">
                     <controls:SliceControl Classes="sidebarItemContainer" />
                     <StackPanel Grid.Row="1" Orientation="Vertical">
                         <controls:SliceControl
                             x:Name="Advanced_Main"
+                            Classes="sidebarButton"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/advanced.png}"
-                            Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_PAGE_UPDATES]}" />
                         <controls:SliceControl
                             x:Name="Advanced_Updates"
+                            Classes="sidebarButton"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/updates.png}"
-                            Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_PAGE_UPGRATES]}" />
                         <controls:SliceControl
                             x:Name="Advanced_Connection"
+                            Classes="sidebarButton"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/connection.png}"
-                            Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_PAGE_CONNECTION]}" />
                         <controls:SliceControl
                             x:Name="Advanced_Hotkeys"
+                            Classes="sidebarButton"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/hotkeys.png}"
-                            Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_PAGE_KEYBOARD]}" />
                         <!--  Skymu original  -->
                         <controls:SliceControl
                             x:Name="Advanced_Debug"
+                            Classes="sidebarButton"
+                            IsVisible="False"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/advanced.png}"
-                            Classes="sidebarButton"
-                            Text="Debug"
-                            IsVisible="False" />
+                            Text="Debug" />
                     </StackPanel>
                 </Grid>
             </StackPanel>
@@ -381,22 +378,16 @@
                         Orientation="Horizontal">
                         <TextBlock
                             x:Name="CTabTitle"
-                            
-                            
                             FontWeight="Bold"
                             Foreground="{DynamicResource Text.HighContrast}"
                             Text="Skymu Customization:" />
                         <TextBlock
                             x:Name="CTabDescription"
                             Margin="7,0"
-                            
-                            
                             Foreground="{DynamicResource Text.HighContrast}"
                             Text="Modify the way Skymu looks, feels, and behaves" />
                     </StackPanel>
-                    <ContentControl
-                        x:Name="PageHost"
-                        Margin="5,40,5,5" />
+                    <ContentControl x:Name="PageHost" Margin="5,40,5,5" />
                 </Grid>
 
                 <StackPanel
@@ -412,31 +403,27 @@
                         Margin="0,0,12,0"
                         Padding="12,0"
                         Click="SaveButtonClick"
-                        Content="{Binding [sF_OPTIONS_BUTTON_SAVE]}"
-                         />
+                        Content="{Binding [sF_OPTIONS_BUTTON_SAVE]}" />
                     <Button
                         Height="23"
                         MinWidth="73"
                         Margin="0,0,12,0"
                         Padding="12,0"
                         Click="RestartButtonClick"
-                        Content="Save and restart"
-                         />
+                        Content="Save and restart" />
                     <Button
                         Height="23"
                         MinWidth="73"
                         Margin="0,0,12,0"
                         Padding="12,0"
                         Click="ResetButtonClick"
-                        Content="{Binding [sF_OPTIONS_BTN_RESET]}"
-                         />
+                        Content="{Binding [sF_OPTIONS_BTN_RESET]}" />
                     <Button
                         Height="23"
                         MinWidth="73"
                         Padding="12,0"
                         Click="CancelButtonClick"
-                        Content="{Binding [sF_OPTIONS_BUTTON_CANCEL]}"
-                         />
+                        Content="{Binding [sF_OPTIONS_BUTTON_CANCEL]}" />
                 </StackPanel>
 
             </Grid>

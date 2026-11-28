@@ -1,21 +1,40 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="Skymu.Controls.MainMenuBar">
+<UserControl
+    x:Class="Skymu.Controls.MainMenuBar"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <UserControl.Resources>
         <NativeMenu x:Key="HostMenu">
 
-            <!-- ================= Skype ================= -->
+            <!--  ================= Skype =================  -->
             <NativeMenuItem Header="{Binding [sMAINMENU_SKYPE], Source={StaticResource Lang}}">
                 <NativeMenu>
                     <NativeMenuItem Header="{Binding [sMAINMENU_SKYPE_ONLINESTATUS], Source={StaticResource Lang}}">
                         <NativeMenu>
-                            <NativeMenuItem Click="OnStatus" CommandParameter="Online" Header="{Binding [sTRAYHINT_USER_ONLINE], Source={StaticResource Lang}}" />
-                            <NativeMenuItem Click="OnStatus" CommandParameter="Away" Header="{Binding [sTRAYHINT_USER_AWAY], Source={StaticResource Lang}}" />
-                            <NativeMenuItem Click="OnStatus" CommandParameter="DoNotDisturb" Header="{Binding [sTRAYHINT_USER_DND], Source={StaticResource Lang}}" />
-                            <NativeMenuItem Click="OnStatus" CommandParameter="Invisible" Header="{Binding [sTRAYHINT_USER_INVISIBLE], Source={StaticResource Lang}}" />
-                            <NativeMenuItem CommandParameter="Offline" Header="{Binding [sTRAYHINT_USER_OFFLINE], Source={StaticResource Lang}}" IsEnabled="False" />
+                            <NativeMenuItem
+                                Click="OnStatus"
+                                CommandParameter="Online"
+                                Header="{Binding [sTRAYHINT_USER_ONLINE], Source={StaticResource Lang}}" />
+                            <NativeMenuItem
+                                Click="OnStatus"
+                                CommandParameter="Away"
+                                Header="{Binding [sTRAYHINT_USER_AWAY], Source={StaticResource Lang}}" />
+                            <NativeMenuItem
+                                Click="OnStatus"
+                                CommandParameter="DoNotDisturb"
+                                Header="{Binding [sTRAYHINT_USER_DND], Source={StaticResource Lang}}" />
+                            <NativeMenuItem
+                                Click="OnStatus"
+                                CommandParameter="Invisible"
+                                Header="{Binding [sTRAYHINT_USER_INVISIBLE], Source={StaticResource Lang}}" />
+                            <NativeMenuItem
+                                CommandParameter="Offline"
+                                Header="{Binding [sTRAYHINT_USER_OFFLINE], Source={StaticResource Lang}}"
+                                IsEnabled="False" />
                             <NativeMenuItemSeparator />
-                            <NativeMenuItem CommandParameter="StatusOptions" Header="{Binding [sSTATUSMENU_CAPTION_CF_OPTIONS2], Source={StaticResource Lang}}" IsEnabled="False" />
+                            <NativeMenuItem
+                                CommandParameter="StatusOptions"
+                                Header="{Binding [sSTATUSMENU_CAPTION_CF_OPTIONS2], Source={StaticResource Lang}}"
+                                IsEnabled="False" />
                         </NativeMenu>
                     </NativeMenuItem>
                     <NativeMenuItemSeparator />
@@ -31,7 +50,7 @@
                 </NativeMenu>
             </NativeMenuItem>
 
-            <!-- ================= Contacts ================= -->
+            <!--  ================= Contacts =================  -->
             <NativeMenuItem Header="{Binding [sMAINMENU_CONTACTS], Source={StaticResource Lang}}">
                 <NativeMenu>
                     <NativeMenuItem Click="OnAddContact" Header="{Binding [sMAINMENU_CONTACTS_ADD_CONTACT], Source={StaticResource Lang}}" />
@@ -47,7 +66,7 @@
                 </NativeMenu>
             </NativeMenuItem>
 
-            <!-- ================= Conversation ================= -->
+            <!--  ================= Conversation =================  -->
             <NativeMenuItem Header="{Binding [sMAINMENU_CONVERSATION], Source={StaticResource Lang}}">
                 <NativeMenu>
                     <NativeMenuItem Header="{Binding [sMAINMENU_CONVERSATION_PROFILE_PANEL], Source={StaticResource Lang}}" IsEnabled="False" />
@@ -68,7 +87,7 @@
                 </NativeMenu>
             </NativeMenuItem>
 
-            <!-- ================= Call ================= -->
+            <!--  ================= Call =================  -->
             <NativeMenuItem Header="{Binding [sMAINMENU_CALL], Source={StaticResource Lang}}">
                 <NativeMenu>
                     <NativeMenuItem Click="OnCall" Header="{Binding [sMAINMENU_CALL], Source={StaticResource Lang}}" />
@@ -94,7 +113,7 @@
                 </NativeMenu>
             </NativeMenuItem>
 
-            <!-- ================= View ================= -->
+            <!--  ================= View =================  -->
             <NativeMenuItem Header="{Binding [sMAINMENU_VIEW], Source={StaticResource Lang}}">
                 <NativeMenu>
                     <NativeMenuItem Click="OnContacts" Header="{Binding [sMAINMENU_VIEW_CONTACTS], Source={StaticResource Lang}}" />
@@ -118,14 +137,15 @@
                 </NativeMenu>
             </NativeMenuItem>
 
-            <!-- ================= Tools ================= -->
+            <!--  ================= Tools =================  -->
             <NativeMenuItem Header="{Binding [sMAINMENU_TOOLS], Source={StaticResource Lang}}">
                 <NativeMenu>
                     <NativeMenuItem CommandParameter="ExtrasMenu" Header="{Binding [sMAINMENU_TOOLS_EXTRAS], Source={StaticResource Lang}}">
                         <NativeMenu>
-                            <NativeMenuItem CommandParameter="GetExtras"
-                                            Header="{Binding [sMENU_EXTRAS_GET_APPS_CAPTION], Source={StaticResource Lang}}"
-                                            IsEnabled="False" />
+                            <NativeMenuItem
+                                CommandParameter="GetExtras"
+                                Header="{Binding [sMENU_EXTRAS_GET_APPS_CAPTION], Source={StaticResource Lang}}"
+                                IsEnabled="False" />
                         </NativeMenu>
                     </NativeMenuItem>
                     <NativeMenuItemSeparator />
@@ -138,7 +158,7 @@
                 </NativeMenu>
             </NativeMenuItem>
 
-            <!-- ================= Help ================= -->
+            <!--  ================= Help =================  -->
             <NativeMenuItem Header="{Binding [sMAINMENU_HELP], Source={StaticResource Lang}}">
                 <NativeMenu>
                     <NativeMenuItem Header="{Binding [sMAINMENU_HELP_HELP], Source={StaticResource Lang}}" IsEnabled="False" />
@@ -156,6 +176,6 @@
         </NativeMenu>
     </UserControl.Resources>
 
-    <!-- collapses when the menu is exported (macOS / Linux global menu) and renders in-window otherwise -->
+    <!--  collapses when the menu is exported (macOS / Linux global menu) and renders in-window otherwise  -->
     <NativeMenuBar />
 </UserControl>

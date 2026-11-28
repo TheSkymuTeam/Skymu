@@ -16,8 +16,8 @@
     x:Class="Skymu.Controls.SliceControl"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:global="clr-namespace:Skymu"
     xmlns:controls="clr-namespace:Skymu.Controls"
+    xmlns:global="clr-namespace:Skymu"
     x:Name="Root"
     Background="Transparent"
     UseLayoutRounding="True">
@@ -122,8 +122,8 @@
             Grid.ColumnSpan="3"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
-            ZIndex="10"
             IsHitTestVisible="False"
-            TextTrimming="CharacterEllipsis" />
+            TextTrimming="CharacterEllipsis"
+            ZIndex="10" />
     </Grid>
 </UserControl>

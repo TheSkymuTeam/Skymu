@@ -81,7 +81,7 @@
     <SolidColorBrush x:Key="Metro.Text.LowContrast" Color="#FFA88888" />
     <SolidColorBrush x:Key="Metro.Text.Highlight" Color="#CC0000" />
 
-        <LinearGradientBrush x:Key="Home.Banner.Background" StartPoint="0%,0%" EndPoint="0%,100%">
+    <LinearGradientBrush x:Key="Home.Banner.Background" StartPoint="0%,0%" EndPoint="0%,100%">
         <GradientStop Offset="0" Color="#FFFFFF" />
         <GradientStop Offset="1" Color="#FFFFDC" />
     </LinearGradientBrush>

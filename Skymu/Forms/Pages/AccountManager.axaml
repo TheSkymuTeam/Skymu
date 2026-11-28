@@ -19,8 +19,7 @@
     Width="500"
     Height="275"
     Background="Transparent"
-    Loaded="Page_Loaded"
-    >
+    Loaded="Page_Loaded">
     <Grid Margin="0,0,0,8">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -32,8 +31,6 @@
         <TextBlock
             Grid.Row="0"
             Margin="0,0,0,16"
-            
-            
             Foreground="{DynamicResource Text.VeryHighContrast}"
             Text="Select a saved account to log in, enable or disable auto-login for it, adjust its login priority, or remove it. Auto-login uses the highest priority eligible account."
             TextWrapping="Wrap" />
@@ -85,15 +82,12 @@
 
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                             <TextBlock
-                                                
                                                 FontSize="12"
                                                 FontWeight="Bold"
                                                 Foreground="{DynamicResource Text.HighContrast}"
                                                 Text="{Binding DisplayName}"
                                                 TextTrimming="CharacterEllipsis" />
                                             <TextBlock
-                                                
-                                                
                                                 Foreground="{DynamicResource Text.HighContrast}"
                                                 Opacity="0.75"
                                                 Text="{Binding Details}"
@@ -104,8 +98,6 @@
                                             Grid.Column="2"
                                             Margin="8,0,4,0"
                                             VerticalAlignment="Center"
-                                            
-                                            
                                             Foreground="{DynamicResource Text.HighContrast}"
                                             Opacity="0.75"
                                             Text="{Binding AutoLoginText}" />
@@ -119,13 +111,11 @@
                             x:Name="EmptyText"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            
-                            
                             Foreground="{DynamicResource Text.VeryHighContrast}"
                             IsHitTestVisible="False"
+                            IsVisible="False"
                             Opacity="0.75"
-                            Text="No saved accounts."
-                            IsVisible="False" />
+                            Text="No saved accounts." />
                     </Grid>
                 </Border>
                 <!--  actions  -->
@@ -141,9 +131,7 @@
                         Margin="0,0,8,0"
                         Padding="12,0"
                         Click="AddAccountButton_Click"
-                        Content="New account"
-                        
-                         />
+                        Content="New account" />
                     <Button
                         x:Name="LoginButton"
                         Height="23"
@@ -152,8 +140,6 @@
                         Padding="12,0"
                         Click="LoginButton_Click"
                         Content="Log in"
-                        
-                        
                         IsEnabled="False" />
                     <Button
                         x:Name="AutoLoginButton"
@@ -164,8 +150,6 @@
                         VerticalAlignment="Top"
                         Click="AutoLoginButton_Click"
                         Content="Disable auto-login"
-                        
-                        
                         IsEnabled="False" />
                     <Button
                         x:Name="RemoveButton"
@@ -175,8 +159,6 @@
                         Padding="12,0"
                         Click="RemoveButton_Click"
                         Content="Remove"
-                        
-                        
                         IsEnabled="False" />
                     <Button
                         x:Name="RemoveAllButton"
@@ -184,9 +166,7 @@
                         MinWidth="73"
                         Padding="12,0"
                         Click="RemoveAllButton_Click"
-                        Content="Remove all"
-                        
-                         />
+                        Content="Remove all" />
                 </StackPanel>
             </Grid>
 

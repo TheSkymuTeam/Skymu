@@ -1,227 +1,229 @@
 <!--
-============================================================
-Copyright © The Skymu Team and other contributors.
-For any inquiries or concerns, email contact@skymu.app.
-============================================================
-Modification or redistribution of this code is governed
-by the terms set out in the project license agreement.
-If you do not comply with those terms, you may not
-modify or distribute any original code from the project.
-============================================================
-License: https://skymu.app/legal/license
-SPDX-License-Identifier: AGPL-3.0-or-later
-============================================================
+    ============================================================
+    Copyright © The Skymu Team and other contributors.
+    For any inquiries or concerns, email contact@skymu.app.
+    ============================================================
+    Modification or redistribution of this code is governed
+    by the terms set out in the project license agreement.
+    If you do not comply with those terms, you may not
+    modify or distribute any original code from the project.
+    ============================================================
+    License: https://skymu.app/legal/license
+    SPDX-License-Identifier: AGPL-3.0-or-later
+    ============================================================
 -->
 <UserControl
-x:Class="Skymu.Forms.CallScreen"
-xmlns="https://github.com/avaloniaui"
-xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-xmlns:converters="clr-namespace:Skymu.Converters"
-xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-xmlns:global="clr-namespace:Skymu"
-xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-HorizontalAlignment="Stretch"
-VerticalAlignment="Stretch"
-d:DesignHeight="720"
-xmlns:controls="clr-namespace:Skymu.Controls"
-d:DesignWidth="1280"
-Background="#000"
-FontFamily="Arial"
-FontSize="15.5"
-SizeChanged="Resized"
-mc:Ignorable="d">
-	<UserControl.Resources>
-		<converters:AssetLoader x:Key="AssetLoader" />
-		<ControlTheme x:Key="ActionButtonStyle" TargetType="controls:SliceControl">
-			<Setter Property="StackDirection" Value="Vertical" />
-			<Setter Property="ElementCount" Value="5" />
-			<Setter Property="SliceMode" Value="0" />
-			<Setter Property="DefaultIndex" Value="0" />
-			<Setter Property="HoverIndex" Value="3" />
-			<Setter Property="PressedIndex" Value="2" />
-			<Setter Property="HoverTransition" Value="True" />
-		</ControlTheme>
-	</UserControl.Resources>
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="*" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
-		<Grid x:Name="CallLayoutGrid" Grid.RowSpan="2" ClipToBounds="True">
+    x:Class="Skymu.Forms.CallScreen"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Skymu.Controls"
+    xmlns:converters="clr-namespace:Skymu.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:global="clr-namespace:Skymu"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    HorizontalAlignment="Stretch"
+    VerticalAlignment="Stretch"
+    d:DesignHeight="720"
+    d:DesignWidth="1280"
+    Background="#000"
+    FontFamily="Arial"
+    FontSize="15.5"
+    SizeChanged="Resized"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <converters:AssetLoader x:Key="AssetLoader" />
+        <ControlTheme x:Key="ActionButtonStyle" TargetType="controls:SliceControl">
+            <Setter Property="StackDirection" Value="Vertical" />
+            <Setter Property="ElementCount" Value="5" />
+            <Setter Property="SliceMode" Value="0" />
+            <Setter Property="DefaultIndex" Value="0" />
+            <Setter Property="HoverIndex" Value="3" />
+            <Setter Property="PressedIndex" Value="2" />
+            <Setter Property="HoverTransition" Value="True" />
+        </ControlTheme>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid
+            x:Name="CallLayoutGrid"
+            Grid.RowSpan="2"
+            ClipToBounds="True">
 
-			<Grid.RowDefinitions>
-				<RowDefinition Height="*" />
-				<RowDefinition Height="*" />
-				<RowDefinition Height="0" />
-			</Grid.RowDefinitions>
-			<!--  top gradient  -->
-			<Image
-			Grid.Row="0"
-			Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/gradient_top.png'}"
-			Stretch="Fill" />
-			<!--  bottom gradient  -->
-			<Image
-			x:Name="bottom_gradient"
-			Grid.Row="1"
-			Opacity="1"
-			Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/gradient_bottom.png'}"
-			Stretch="Fill" />
-			<Rectangle
-			Grid.Row="2"
-			Height="110"
-			VerticalAlignment="Bottom">
-				<Rectangle.Fill>
-					<LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
-						<!--  Top of this overlay  -->
-						<GradientStop Offset="0.0" Color="#001821" />
-						<!--  Bottom of this overlay  -->
-						<GradientStop Offset="1.0" Color="#005371" />
-					</LinearGradientBrush>
-				</Rectangle.Fill>
-			</Rectangle>
-			<!--  noise  -->
-			<Rectangle Grid.RowSpan="3">
-				<Rectangle.Fill>
-					<ImageBrush
-					Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/noise.png'}"
-					Opacity="0.05"
-					Stretch="None"
-					TileMode="Tile"
-					DestinationRect="0,0,32,32" />
-				</Rectangle.Fill>
-			</Rectangle>
-		</Grid>
-		<Grid Grid.Row="0">
-			<Image
-			x:Name="Logo"
-			Width="169"
-			HorizontalAlignment="Right"
-			VerticalAlignment="Top"
-			Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Branding/logo-call-big.png'}" />
-			<StackPanel
-			HorizontalAlignment="Center"
-			VerticalAlignment="Center"
-			Orientation="Vertical">
-				<Image
-				x:Name="PartnerAvatar"
-				Height="160"
-				Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Themeable/Profile Pictures/saul.png'}" />
-				<TextBlock
-				x:Name="PartnerDisplayName"
-				Margin="0,18,0,5"
-				FontWeight="Bold"
-				Foreground="White"
-				Text="Saul Goodman"
-				TextAlignment="Center" />
-				<TextBlock
-				x:Name="CallStatus"
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="0" />
+            </Grid.RowDefinitions>
+            <!--  top gradient  -->
+            <Image
+                Grid.Row="0"
+                Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/gradient_top.png'}"
+                Stretch="Fill" />
+            <!--  bottom gradient  -->
+            <Image
+                x:Name="bottom_gradient"
+                Grid.Row="1"
+                Opacity="1"
+                Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/gradient_bottom.png'}"
+                Stretch="Fill" />
+            <Rectangle
+                Grid.Row="2"
+                Height="110"
+                VerticalAlignment="Bottom">
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+                        <!--  Top of this overlay  -->
+                        <GradientStop Offset="0.0" Color="#001821" />
+                        <!--  Bottom of this overlay  -->
+                        <GradientStop Offset="1.0" Color="#005371" />
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+            <!--  noise  -->
+            <Rectangle Grid.RowSpan="3">
+                <Rectangle.Fill>
+                    <ImageBrush
+                        DestinationRect="0,0,32,32"
+                        Opacity="0.05"
+                        Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/noise.png'}"
+                        Stretch="None"
+                        TileMode="Tile" />
+                </Rectangle.Fill>
+            </Rectangle>
+        </Grid>
+        <Grid Grid.Row="0">
+            <Image
+                x:Name="Logo"
+                Width="169"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Branding/logo-call-big.png'}" />
+            <StackPanel
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Orientation="Vertical">
+                <Image
+                    x:Name="PartnerAvatar"
+                    Height="160"
+                    Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Themeable/Profile Pictures/saul.png'}" />
+                <TextBlock
+                    x:Name="PartnerDisplayName"
+                    Margin="0,18,0,5"
+                    FontWeight="Bold"
+                    Foreground="White"
+                    Text="Saul Goodman"
+                    TextAlignment="Center" />
+                <TextBlock
+                    x:Name="CallStatus"
+                    Foreground="White"
+                    Text="calling"
+                    TextAlignment="Center" />
+                <controls:SliceControl
+                    x:Name="ConnectionAnimation"
+                    Margin="0,50"
+                    VerticalAlignment="Bottom"
+                    AnimationFps="20"
+                    DefaultIndex="0"
+                    ElementCount="10"
+                    HoverIndex="1"
+                    IsAnimation="True"
+                    SliceMode="0"
+                    Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/connection_anim.png'}"
+                    StackDirection="Vertical" />
+                <Image
+                    x:Name="MyAvatar"
+                    Height="160"
+                    Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Themeable/Profile Pictures/waltuh.png'}" />
+            </StackPanel>
+        </Grid>
 
-				Foreground="White"
-				Text="calling"
-				TextAlignment="Center" />
-				<controls:SliceControl
-				x:Name="ConnectionAnimation"
-				Margin="0,50"
-				VerticalAlignment="Bottom"
-				AnimationFps="20"
-				DefaultIndex="0"
-				ElementCount="10"
-				HoverIndex="1"
-				IsAnimation="True"
-				SliceMode="0"
-				Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/connection_anim.png'}"
-				StackDirection="Vertical" />
-				<Image
-				x:Name="MyAvatar"
-				Height="160"
-				Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Themeable/Profile Pictures/waltuh.png'}" />
-			</StackPanel>
-		</Grid>
-
-		<Grid
-		x:Name="ActionBar"
-		Grid.Row="1"
-		Margin="0,0,0,16"
-		HorizontalAlignment="Center"
-		VerticalAlignment="Bottom">
-			<Grid.ColumnDefinitions>
-				<!--
-				You might be wondering why Column 1 is 156px and Column 2 is 164px,
-				and why both aren't 160px for an equally aligned UI. The answer to this
-				question is: Ask the Skype designers, it's their fault. If I fixed this
-				visual bug, it wouldn't be accurate, and this is why the columns are
-				going to remain misaligned.
-				-->
-				<ColumnDefinition Width="156" />
-				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="164" />
-			</Grid.ColumnDefinitions>
-			<controls:SliceControl
-			x:Name="ActionBarContainer"
-			Grid.ColumnSpan="3"
-			BottomHeight="33"
-			SliceMode="1"
-			Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/pill.png'}"
-			TopHeight="3" />
-			<StackPanel
-			Grid.Column="0"
-			Margin="24,0,0,0"
-			HorizontalAlignment="Left"
-			VerticalAlignment="Center"
-			Orientation="Horizontal">
-				<controls:SliceControl
-				x:Name="SidebarButton"
-				PointerReleased="OnSidebarToggled"
-				Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_sidebar_expand.png'}"
-				Theme="{StaticResource ActionButtonStyle}" />
-				<controls:SliceControl
-				x:Name="ChatButton"
-				Margin="8,0,0,0"
-				PointerReleased="OnChatToggled"
-				Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_chat_inactive.png'}"
-				Theme="{StaticResource ActionButtonStyle}" />
-			</StackPanel>
-			<StackPanel
-			Grid.Column="1"
-			HorizontalAlignment="Center"
-			VerticalAlignment="Center"
-			Orientation="Horizontal">
-				<controls:SliceControl
-				x:Name="MuteButton"
-				Margin="4,0"
-				PointerReleased="OnMuteToggled"
-				Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_mic_off.png'}"
-				Theme="{StaticResource ActionButtonStyle}" />
-				<controls:SliceControl
-				Margin="4,0"
-				Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_dialpad.png'}"
-				Theme="{StaticResource ActionButtonStyle}" />
-				<controls:SliceControl
-				Margin="4,0"
-				Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_add.png'}"
-				Theme="{StaticResource ActionButtonStyle}" />
-				<controls:SliceControl
-				Margin="4,0"
-				PointerReleased="OnHangUp"
-				Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_hangup.png'}"
-				Theme="{StaticResource ActionButtonStyle}" />
-			</StackPanel>
-			<StackPanel
-			Grid.Column="2"
-			Margin="0,0,24,0"
-			HorizontalAlignment="Right"
-			VerticalAlignment="Center"
-			Orientation="Horizontal">
-				<controls:SliceControl
-				Margin="0,0,8,0"
-				Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_connection_4.png'}"
-				Theme="{StaticResource ActionButtonStyle}" />
-				<controls:SliceControl
-				x:Name="FullscreenButton"
-				PointerReleased="OnFullscreenToggled"
-				Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_screen_expand.png'}"
-				Theme="{StaticResource ActionButtonStyle}" />
-			</StackPanel>
-		</Grid>
-	</Grid>
+        <Grid
+            x:Name="ActionBar"
+            Grid.Row="1"
+            Margin="0,0,0,16"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom">
+            <Grid.ColumnDefinitions>
+                <!--
+                    You might be wondering why Column 1 is 156px and Column 2 is 164px,
+                    and why both aren't 160px for an equally aligned UI. The answer to this
+                    question is: Ask the Skype designers, it's their fault. If I fixed this
+                    visual bug, it wouldn't be accurate, and this is why the columns are
+                    going to remain misaligned.
+                -->
+                <ColumnDefinition Width="156" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="164" />
+            </Grid.ColumnDefinitions>
+            <controls:SliceControl
+                x:Name="ActionBarContainer"
+                Grid.ColumnSpan="3"
+                BottomHeight="33"
+                SliceMode="1"
+                Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/pill.png'}"
+                TopHeight="3" />
+            <StackPanel
+                Grid.Column="0"
+                Margin="24,0,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <controls:SliceControl
+                    x:Name="SidebarButton"
+                    PointerReleased="OnSidebarToggled"
+                    Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_sidebar_expand.png'}"
+                    Theme="{StaticResource ActionButtonStyle}" />
+                <controls:SliceControl
+                    x:Name="ChatButton"
+                    Margin="8,0,0,0"
+                    PointerReleased="OnChatToggled"
+                    Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_chat_inactive.png'}"
+                    Theme="{StaticResource ActionButtonStyle}" />
+            </StackPanel>
+            <StackPanel
+                Grid.Column="1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <controls:SliceControl
+                    x:Name="MuteButton"
+                    Margin="4,0"
+                    PointerReleased="OnMuteToggled"
+                    Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_mic_off.png'}"
+                    Theme="{StaticResource ActionButtonStyle}" />
+                <controls:SliceControl
+                    Margin="4,0"
+                    Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_dialpad.png'}"
+                    Theme="{StaticResource ActionButtonStyle}" />
+                <controls:SliceControl
+                    Margin="4,0"
+                    Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_add.png'}"
+                    Theme="{StaticResource ActionButtonStyle}" />
+                <controls:SliceControl
+                    Margin="4,0"
+                    PointerReleased="OnHangUp"
+                    Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_hangup.png'}"
+                    Theme="{StaticResource ActionButtonStyle}" />
+            </StackPanel>
+            <StackPanel
+                Grid.Column="2"
+                Margin="0,0,24,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <controls:SliceControl
+                    Margin="0,0,8,0"
+                    Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_connection_4.png'}"
+                    Theme="{StaticResource ActionButtonStyle}" />
+                <controls:SliceControl
+                    x:Name="FullscreenButton"
+                    PointerReleased="OnFullscreenToggled"
+                    Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_screen_expand.png'}"
+                    Theme="{StaticResource ActionButtonStyle}" />
+            </StackPanel>
+        </Grid>
+    </Grid>
 </UserControl>
