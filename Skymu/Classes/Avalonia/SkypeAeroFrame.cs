@@ -25,6 +25,7 @@ namespace Skymu.AvaloniaTools
 
         public SkypeAeroFrame(Window window)
         {
+            if (!OperatingSystem.IsWindows()) return;
             _window = window;
         }
 
@@ -53,10 +54,16 @@ namespace Skymu.AvaloniaTools
         [DllImport("user32.dll")] private static extern uint GetSysColor(int index);
         [DllImport("user32.dll")] private static extern IntPtr GetDC(IntPtr hwnd);
         [DllImport("user32.dll")] private static extern int ReleaseDC(IntPtr hwnd, IntPtr hdc);
-        [DllImport("user32.dll")]
-        private static extern bool UpdateLayeredWindow(IntPtr hwnd, IntPtr hdcDst, ref NativePoint pptDst, ref NativeSize psize,
-            IntPtr hdcSrc, ref NativePoint pptSrc, uint crKey, ref BLENDFUNCTION blend, uint flags);
-
+        [DllImport("user32.dll")] private static extern bool UpdateLayeredWindow(IntPtr hwnd, IntPtr hdcDst, ref NativePoint pptDst, ref NativeSize psize, IntPtr hdcSrc, ref NativePoint pptSrc, uint crKey, ref BLENDFUNCTION blend, uint flags);
+        [DllImport("user32.dll")] private static extern IntPtr SendMessage(IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam);
+        [DllImport("user32.dll")] private static extern bool PostMessage(IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam);
+        [DllImport("user32.dll")] private static extern bool DestroyIcon(IntPtr hIcon);
+        [DllImport("user32.dll")] private static extern int GetWindowLong(IntPtr hwnd, int index);
+        [DllImport("user32.dll")] private static extern int SetWindowLong(IntPtr hwnd, int index, int value);
+        [DllImport("user32.dll")] private static extern bool TrackMouseEvent(ref TRACKMOUSEEVENT tme);
+        [DllImport("user32.dll", SetLastError = true)] private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelMouseProc lpfn, IntPtr hMod, uint dwThreadId);
+        [DllImport("user32.dll")] private static extern bool UnhookWindowsHookEx(IntPtr hhk);
+        [DllImport("user32.dll")] private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
         [DllImport("gdi32.dll")] private static extern IntPtr CreateCompatibleDC(IntPtr hdc);
         [DllImport("gdi32.dll")] private static extern IntPtr CreateDIBSection(IntPtr hdc, ref BITMAPINFOHEADER bi, uint usage, out IntPtr bits, IntPtr section, uint offset);
         [DllImport("gdi32.dll")] private static extern IntPtr SelectObject(IntPtr hdc, IntPtr obj);
@@ -64,17 +71,6 @@ namespace Skymu.AvaloniaTools
         [DllImport("gdi32.dll")] private static extern bool DeleteDC(IntPtr hdc);
         [DllImport("gdi32.dll")] private static extern bool GdiFlush();
         [DllImport("gdi32.dll", CharSet = CharSet.Unicode)] private static extern IntPtr CreateFontIndirectW(ref LOGFONT lf);
-
-        [DllImport("user32.dll")] private static extern IntPtr SendMessage(IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam);
-        [DllImport("user32.dll")] private static extern bool PostMessage(IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam);
-        [DllImport("user32.dll")] private static extern bool DestroyIcon(IntPtr hIcon);
-        [DllImport("user32.dll")] private static extern int GetWindowLong(IntPtr hwnd, int index);
-        [DllImport("user32.dll")] private static extern int SetWindowLong(IntPtr hwnd, int index, int value);
-        [DllImport("user32.dll")] private static extern bool TrackMouseEvent(ref TRACKMOUSEEVENT tme);
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelMouseProc lpfn, IntPtr hMod, uint dwThreadId);
-        [DllImport("user32.dll")] private static extern bool UnhookWindowsHookEx(IntPtr hhk);
-        [DllImport("user32.dll")] private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode)] private static extern IntPtr GetModuleHandle(string lpModuleName);
 
         private const uint WM_SETICON = 0x80, WM_SYSCOMMAND = 0x112;

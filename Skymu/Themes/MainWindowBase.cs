@@ -1225,7 +1225,6 @@ namespace Skymu.Theming
         protected override void OnClosed(EventArgs e)
         {
             SavePositioning(this, SidebarColumn);
-
         }
 
         protected void OnClose(object sender, RoutedEventArgs e)

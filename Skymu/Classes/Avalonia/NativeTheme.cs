@@ -102,8 +102,7 @@ namespace Skymu.AvaloniaTools
             if (!IsSupported)
                 return styles;
 
-            styles.Add(AvaloniaRuntimeXamlLoader.Parse<Styles>(
-                BuildXaml(), typeof(NativeTheme).Assembly));
+            styles.Add(AvaloniaRuntimeXamlLoader.Parse<Styles>(BuildXaml(), typeof(NativeTheme).Assembly));
             return styles;
         }
 
@@ -1137,7 +1136,6 @@ namespace Skymu.AvaloniaTools
             }
         }
 
-        /// <summary>UxTheme class, candidate part ids (first that draws wins), optional gripper part.</summary>
         public static (string cls, int[] parts, int gripper) Describe(NativePartKind kind, bool vertical) => kind switch
         {
             NativePartKind.PushButton => ("BUTTON", new[] { 1 }, 0),
@@ -1214,7 +1212,6 @@ namespace Skymu.AvaloniaTools
             }
         }
 
-        // ---- raw UxTheme queries for layout metrics (state 0 = part-level values, as native menu code uses)
         public static bool TryTrueSize(string cls, int part, uint dpi, out Win32.SIZE size)
         {
             lock (_lock)

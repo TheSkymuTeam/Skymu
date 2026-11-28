@@ -689,7 +689,7 @@ namespace Skymu
                 }
             }
             else if (themeName.Contains("Classic")) theme = new ClassicTheme();
-            else if (themeName.Contains("Native") && OperatingSystem.IsWindows()) theme = NativeTheme.Generate(); // TODO crossplatform Native theme?
+            else if (themeName.Contains("Native")) theme = NativeTheme.Generate(); // TODO crossplatform Native theme?
             else theme = new SimpleTheme();
 
             try
