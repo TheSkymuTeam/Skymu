@@ -194,8 +194,12 @@ namespace Skymu.Theming
         private void StartSpinnerAnimation()
         {
             if (Spinner == null) return;
+
+            Spinner.RenderTransformOrigin = new RelativePoint(0.50785, 0.5001, RelativeUnit.Relative);
+
             var transform = new RotateTransform();
             Spinner.RenderTransform = transform;
+
             var animation = new Animation
             {
                 Duration = TimeSpan.FromSeconds(2.133333),
@@ -206,6 +210,7 @@ namespace Skymu.Theming
             new KeyFrame { Cue = new Cue(1.0), Setters = { new Setter(RotateTransform.AngleProperty, 360.0) } },
         },
             };
+
             _ = animation.RunAsync(Spinner);
         }
 
